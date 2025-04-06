@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class SphereController : ManagedUpdateBehaviour
@@ -7,20 +8,21 @@ public class SphereController : ManagedUpdateBehaviour
     Vector2 MoveDirection;
     public Vector2 MoveSpeed;
     public bool InitialLaunch;
-    public float XSize;
-    public float YSize;
+    public float Radius;
     public float InitialYOffset;
     PlayerMovement player;
-
+    private bool bounceOnce;
+    private Vector2 InitialSpeed;
     public void LaunchDirection(Vector3 Movedirection)
     {
+        InitialSpeed = MoveSpeed;
         InitialLaunch = true;
         MoveDirection = Movedirection;
     }
 
     public override void UpdateMe()
     {
-        if (!InitialLaunch) 
+        if (!InitialLaunch)
         {
             if (!player)
                 player = GameManager.Instance.Player;
@@ -29,34 +31,105 @@ public class SphereController : ManagedUpdateBehaviour
             return;
         }
 
+        CalculateCollisions();
+    }
+
+    private void CalculateCollisions()
+    {
         Vector2 pos = transform.position;
 
 
-        if (pos.x < GameManager.Instance.XScreenThresshold.x + XSize / 2) 
+        if (pos.x < GameManager.Instance.XScreenThresshold.x + Radius / 2)
         {
+            bounceOnce = false;
             MoveSpeed.x *= -1;
-            pos.x = GameManager.Instance.XScreenThresshold.x + XSize / 2;
-        } 
-        else if (pos.x > GameManager.Instance.XScreenThresshold.y - XSize / 2) 
+            pos.x = GameManager.Instance.XScreenThresshold.x + Radius / 2;
+        }
+        else if (pos.x > GameManager.Instance.XScreenThresshold.y - Radius / 2)
         {
+            bounceOnce = false;
             MoveSpeed.x *= -1;
-            pos.x = GameManager.Instance.XScreenThresshold.y - XSize / 2;
+            pos.x = GameManager.Instance.XScreenThresshold.y - Radius / 2;
         }
 
-        if (pos.y > GameManager.Instance.YScreenThresshold.x - YSize / 2) 
+        if (pos.y > GameManager.Instance.YScreenThresshold.x - Radius / 2)
         {
+            bounceOnce = false;
             MoveSpeed.y *= -1;
-            pos.y = GameManager.Instance.YScreenThresshold.x - YSize / 2;
+            pos.y = GameManager.Instance.YScreenThresshold.x - Radius / 2;
         }
 
-        if (pos.y < player.transform.position.y + player.YSize / 2 && pos.y > player.transform.position.y - player.YSize / 2 && pos.x > player.transform.position.x - player.XSize / 2 && pos.x < player.transform.position.x + player.XSize / 2) 
-            MoveSpeed *= -1;
+        foreach (var item in GameManager.Instance.Bricks)
+        {
+            if (!item.gameObject.activeSelf) continue;
 
-        if (pos.y < GameManager.Instance.YScreenThresshold.y + YSize / 2 || Input.GetKeyDown(KeyCode.R))
+            if (Vector3.Distance(transform.position, item.gameObject.transform.position) < 1.5f) 
+            {
+                if (pos.y - Radius / 2 < item.transform.position.y + item.Size.y / 2 && pos.y + Radius / 2 > item.transform.position.y - item.Size.y / 2 && pos.x + Radius / 2> item.transform.position.x - item.Size.x / 2 && pos.x - Radius / 2 < item.transform.position.x + item.Size.x / 2) 
+                {
+                    MoveSpeed.y *= -1;
+                    bounceOnce = false;
+                    item.CollideReaction();
+                }
+            }
+        }
+
+        if (pos.y - Radius / 2 < player.transform.position.y + player.Size.y / 2 && pos.y + Radius / 2 > player.transform.position.y - player.Size.y / 2 && pos.x + Radius / 2 > player.transform.position.x - player.Size.x / 2 && pos.x - Radius / 2 < player.transform.position.x + player.Size.x / 2 && !bounceOnce)
+        {
+            bounceOnce = true;
+
+
+            if (pos.x + Radius < player.transform.position.x - player.Size.x / 4)
+            {
+                LeftDirection();
+                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x), MoveSpeed.y * -1);
+            }
+            else if (pos.x + Radius > player.transform.position.x - player.Size.x / 4 && pos.x < player.transform.position.x + player.Size.x / 4)
+            {
+                CenterDirection();
+                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x) * -1, MoveSpeed.y * -1);
+            }
+            else if (pos.x + Radius > player.transform.position.x + player.Size.x / 4)
+            {
+                RightDirection();
+                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x) * -1, MoveSpeed.y * -1);
+            }
+        }
+
+        if (pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 || Input.GetKeyDown(KeyCode.R))
+        {
+            bounceOnce = false;
             InitialLaunch = !InitialLaunch;
+            MoveSpeed = InitialSpeed;
+        }
 
         pos += MoveDirection.normalized * MoveSpeed * Time.deltaTime;
 
         transform.position = pos;
+    }
+
+    public bool CollidesWith() 
+    {
+        return true;
+    }
+
+    private void LeftDirection() 
+    {
+        MoveDirection = new Vector2(Random.Range(-8.5f, -3.5f), 1);
+    }
+
+    private void CenterDirection()
+    {
+        MoveDirection = new Vector2(Random.Range(-1.5f, 1.5f), 1);
+    }
+
+    private void RightDirection()
+    {
+        MoveDirection = new Vector2(Random.Range(3.5f, 8.5f), 1);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(transform.position,Radius);
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class PlayerMovement : ManagedUpdateBehaviour
 {
@@ -8,8 +9,7 @@ public class PlayerMovement : ManagedUpdateBehaviour
 
     public Vector3 direction;
 
-    public float XSize;
-    public float YSize;
+    public Vector3 Size;
 
     public Vector3 offset1 = Vector3.zero;
     public Vector3 offset2 = Vector3.zero;
@@ -23,10 +23,10 @@ public class PlayerMovement : ManagedUpdateBehaviour
             Vector3 pos = transform.position;
             pos.x += xInput * Time.deltaTime * speedScale;
 
-            if (pos.x < GameManager.Instance.XScreenThresshold.x + XSize / 2)
-                pos.x = GameManager.Instance.XScreenThresshold.x + XSize / 2;
-            else if (pos.x > GameManager.Instance.XScreenThresshold.y - XSize / 2)
-                pos.x = GameManager.Instance.XScreenThresshold.y - XSize / 2;
+            if (pos.x < GameManager.Instance.XScreenThresshold.x + Size.x / 2)
+                pos.x = GameManager.Instance.XScreenThresshold.x + Size.x / 2;
+            else if (pos.x > GameManager.Instance.XScreenThresshold.y - Size.x / 2)
+                pos.x = GameManager.Instance.XScreenThresshold.y - Size.x / 2;
 
             transform.position = pos;
         }
@@ -49,5 +49,8 @@ public class PlayerMovement : ManagedUpdateBehaviour
         Gizmos.DrawLine(transform.position + offset1, transform.position + offset1 + Vector3.up);
         Gizmos.DrawLine(transform.position + offset2, transform.position + offset2 + Vector3.up);
         Gizmos.DrawLine(transform.position + offset3, transform.position + offset3 + Vector3.up);
+
+        Gizmos.color = Color.white;
+        Gizmos.DrawWireCube(transform.position, Size);
     }
 }
