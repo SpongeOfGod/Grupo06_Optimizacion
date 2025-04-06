@@ -1,0 +1,53 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMovement : ManagedUpdateBehaviour
+{
+    [SerializeField] float speedScale;
+
+    public Vector3 direction;
+
+    public float XSize;
+    public float YSize;
+
+    public Vector3 offset1 = Vector3.zero;
+    public Vector3 offset2 = Vector3.zero;
+    public Vector3 offset3 = Vector3.zero;
+
+    public override void UpdateMe()
+    {
+        float xInput = Input.GetAxis("Horizontal");
+        if (xInput != 0) 
+        {
+            Vector3 pos = transform.position;
+            pos.x += xInput * Time.deltaTime * speedScale;
+
+            if (pos.x < GameManager.Instance.XScreenThresshold.x + XSize / 2)
+                pos.x = GameManager.Instance.XScreenThresshold.x + XSize / 2;
+            else if (pos.x > GameManager.Instance.XScreenThresshold.y - XSize / 2)
+                pos.x = GameManager.Instance.XScreenThresshold.y - XSize / 2;
+
+            transform.position = pos;
+        }
+
+
+
+        if (Input.GetKeyDown(KeyCode.Space) && !GameManager.Instance.Sphere.InitialLaunch) 
+        {
+            direction = new Vector2(Random.Range(-8.5f, 8.5f), 1);
+            GameManager.Instance.Sphere.LaunchDirection(direction);
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(transform.position, direction);
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position + offset1, transform.position + offset1 + Vector3.up);
+        Gizmos.DrawLine(transform.position + offset2, transform.position + offset2 + Vector3.up);
+        Gizmos.DrawLine(transform.position + offset3, transform.position + offset3 + Vector3.up);
+    }
+}
