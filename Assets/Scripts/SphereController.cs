@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class SphereController : ManagedUpdateBehaviour
 {
@@ -13,6 +11,7 @@ public class SphereController : ManagedUpdateBehaviour
     PlayerMovement player;
     private bool bounceOnce;
     private Vector2 InitialSpeed;
+    public ObjectPool<GameObject> SpherePool;
     public void LaunchDirection(Vector3 Movedirection)
     {
         InitialSpeed = MoveSpeed;
@@ -26,13 +25,25 @@ public class SphereController : ManagedUpdateBehaviour
         {
             if (!player)
                 player = GameManager.Instance.Player;
+
+            if (InitialSpeed != Vector2.zero)
+                MoveSpeed = InitialSpeed;
+
             Vector3 playerPos = player.transform.position;
             transform.position = new Vector3(playerPos.x, InitialYOffset);
+
+            if ((Input.GetKeyDown(KeyCode.Space) && !InitialLaunch && GameManager.Instance.ballsInGame == 1) || GameManager.Instance.ballsInGame > 1)
+            {
+                Vector3 direction = new Vector2(Random.Range(-8.5f, 8.5f), 1);
+                LaunchDirection(direction);
+            }
+
             return;
         }
 
         CalculateCollisions();
     }
+
 
     private void CalculateCollisions()
     {
@@ -63,8 +74,9 @@ public class SphereController : ManagedUpdateBehaviour
         {
             if (!item.gameObject.activeSelf) continue;
 
-            if (Vector3.Distance(transform.position, item.gameObject.transform.position) < 1.5f) 
+            if (Vector3.Distance(transform.position, item.gameObject.transform.position) < 2f) 
             {
+                Debug.Log("Searching Collision");
                 if (pos.y - Radius / 2 < item.transform.position.y + item.Size.y / 2 && pos.y + Radius / 2 > item.transform.position.y - item.Size.y / 2 && pos.x + Radius / 2> item.transform.position.x - item.Size.x / 2 && pos.x - Radius / 2 < item.transform.position.x + item.Size.x / 2) 
                 {
                     MoveSpeed.y *= -1;
@@ -96,11 +108,16 @@ public class SphereController : ManagedUpdateBehaviour
             }
         }
 
-        if (pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 || Input.GetKeyDown(KeyCode.R))
+        if ((pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 && GameManager.Instance.ballsInGame == 1) || Input.GetKeyDown(KeyCode.R))
         {
             bounceOnce = false;
             InitialLaunch = !InitialLaunch;
             MoveSpeed = InitialSpeed;
+        } 
+        else if (pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 && GameManager.Instance.ballsInGame > 1) 
+        {
+            SpherePool.Release(this.gameObject);
+            GameManager.Instance.ballsInGame--;
         }
 
         pos += MoveDirection.normalized * MoveSpeed * Time.deltaTime;

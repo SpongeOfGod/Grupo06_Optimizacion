@@ -1,13 +1,18 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Pool;
 
 public class GameManager : ManagedUpdateBehaviour
 {
     public Vector2 XScreenThresshold;
     public Vector2 YScreenThresshold;
     public PlayerMovement Player;
-    public SphereController Sphere;
     public List<BrickController> Bricks = new List<BrickController>();
+    public GameObject prefabBall;
+
+    ObjectPool<GameObject> SpherePool;
+    public int ballsInGame;
 
     public static GameManager Instance;
     private void Awake()
@@ -19,6 +24,43 @@ public class GameManager : ManagedUpdateBehaviour
         {
             Destroy(gameObject);
         }
+
+        SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
+        ballsInGame++;
+        SpherePool.Get();
+    }
+
+    private void OnDestroyPoolObject(GameObject Gobject)
+    {
+        Destroy(Gobject);
+    }
+
+    private void OnReturnedToPool(GameObject Gobject)
+    {
+        Gobject.SetActive(false);
+    }
+
+    private void OnTakeFromPool(GameObject Gobject)
+    {
+        if (Gobject != null) 
+        {
+            Gobject.SetActive(true);
+            Gobject.transform.position = transform.position;
+            SphereController sphereController = Gobject.GetComponent<SphereController>();
+            sphereController.InitialLaunch = false;
+        }
+    }
+
+    private GameObject CreatePooledItem()
+    {
+        GameObject ball;
+
+        ball = Instantiate(prefabBall, transform.position, Quaternion.identity);
+
+        SphereController sphereController = ball.GetComponent<SphereController>();
+        sphereController.SpherePool = SpherePool;
+
+        return ball;
     }
 
     public override void UpdateMe()
@@ -37,6 +79,15 @@ public class GameManager : ManagedUpdateBehaviour
             {
                 item.gameObject.SetActive(true);
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha0)) 
+        {
+            SpherePool.Get();
+            SpherePool.Get();
+
+            ballsInGame++;
+            ballsInGame++;
         }
     }
 }

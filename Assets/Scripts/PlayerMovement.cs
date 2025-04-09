@@ -30,14 +30,6 @@ public class PlayerMovement : ManagedUpdateBehaviour
 
             transform.position = pos;
         }
-
-
-
-        if (Input.GetKeyDown(KeyCode.Space) && !GameManager.Instance.Sphere.InitialLaunch) 
-        {
-            direction = new Vector2(Random.Range(-8.5f, 8.5f), 1);
-            GameManager.Instance.Sphere.LaunchDirection(direction);
-        }
     }
 
     private void OnDrawGizmos()
