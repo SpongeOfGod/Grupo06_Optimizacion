@@ -7,6 +7,7 @@ public class SphereController : ManagedUpdateBehaviour
     public Vector2 MoveSpeed;
     public bool InitialLaunch;
     public float Radius;
+    public float Mass = 20;
     public float InitialYOffset;
     PlayerMovement player;
     private bool bounceOnce;
@@ -54,20 +55,23 @@ public class SphereController : ManagedUpdateBehaviour
         if (pos.x < GameManager.Instance.XScreenThresshold.x + Radius / 2)
         {
             bounceOnce = false;
-            MoveSpeed.x *= -1;
+            MoveSpeed.x = ( (Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime) * -1);
+            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime));
             pos.x = GameManager.Instance.XScreenThresshold.x + Radius / 2;
         }
         else if (pos.x > GameManager.Instance.XScreenThresshold.y - Radius / 2)
         {
             bounceOnce = false;
-            MoveSpeed.x *= -1;
+            MoveSpeed.x = ((Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime) * -1);
+            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime));
             pos.x = GameManager.Instance.XScreenThresshold.y - Radius / 2;
         }
 
         if (pos.y > GameManager.Instance.YScreenThresshold.x - Radius / 2)
         {
             bounceOnce = false;
-            MoveSpeed.y *= -1;
+            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime) * -1);
+            MoveSpeed.x =((Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime));
             pos.y = GameManager.Instance.YScreenThresshold.x - Radius / 2;
         }
 
@@ -75,11 +79,13 @@ public class SphereController : ManagedUpdateBehaviour
         {
             if (!item.gameObject.activeSelf) continue;
 
-            if (Vector3.Distance(transform.position, item.gameObject.transform.position) < 2f) 
+           float distancetoObject = Vector3.Distance (transform.position, item.gameObject.transform.position);
+            if ( distancetoObject < 2f) 
             {
                 if (pos.y - Radius / 2 < item.transform.position.y + item.Size.y / 2 && pos.y + Radius / 2 > item.transform.position.y - item.Size.y / 2 && pos.x + Radius / 2> item.transform.position.x - item.Size.x / 2 && pos.x - Radius / 2 < item.transform.position.x + item.Size.x / 2) 
                 {
-                    MoveSpeed.y *= -1;
+                    MoveSpeed.x = ((Mass * ((MoveSpeed.normalized.x * distancetoObject ) / Time.deltaTime) * Time.deltaTime) * -1);
+                    MoveSpeed.y = ((Mass * ((MoveSpeed.normalized.y * distancetoObject ) / Time.deltaTime) * Time.deltaTime));
                     bounceOnce = false;
                     item.CollideReaction();
                 }

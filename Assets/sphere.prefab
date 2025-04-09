@@ -115,7 +115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3cee8a5aedad4be49b01de40b0bc1d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MoveSpeed: {x: 10, y: 10}
+  MoveSpeed: {x: 20, y: 20}
   InitialLaunch: 0
   Radius: 0.5
+  Mass: 20
   InitialYOffset: -2.64
