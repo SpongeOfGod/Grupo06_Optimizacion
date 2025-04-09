@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -10,24 +9,26 @@ public class GameManager : ManagedUpdateBehaviour
     public PlayerMovement Player;
     public List<BrickController> Bricks = new List<BrickController>();
     public GameObject prefabBall;
+    public GameObject prefabBrick;
 
-    ObjectPool<GameObject> SpherePool;
+
+    public ObjectPool<GameObject> SpherePool;
+    ObjectPool<GameObject> BrickPool;
     public int ballsInGame;
 
     public static GameManager Instance;
     private void Awake()
     {
-        if (Instance == null) 
-        {
-            Instance = this;
-        } else if (Instance != this) 
-        {
-            Destroy(gameObject);
-        }
+        Instance = this;
+        //if (Instance == null) 
+        //{
+        //    Instance = this;
+        //} else if (Instance != this) 
+        //{
+        //    Destroy(gameObject);
+        //}
 
         SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
-        ballsInGame++;
-        SpherePool.Get();
     }
 
     private void OnDestroyPoolObject(GameObject Gobject)
@@ -45,9 +46,6 @@ public class GameManager : ManagedUpdateBehaviour
         if (Gobject != null) 
         {
             Gobject.SetActive(true);
-            Gobject.transform.position = transform.position;
-            SphereController sphereController = Gobject.GetComponent<SphereController>();
-            sphereController.InitialLaunch = false;
         }
     }
 
@@ -57,14 +55,15 @@ public class GameManager : ManagedUpdateBehaviour
 
         ball = Instantiate(prefabBall, transform.position, Quaternion.identity);
 
-        SphereController sphereController = ball.GetComponent<SphereController>();
-        sphereController.SpherePool = SpherePool;
-
         return ball;
     }
 
     public override void UpdateMe()
     {
+        if (ballsInGame == 0)
+            CreateSphere();
+
+
         bool allGameObjectsOff = false;
 
         foreach (var item in Bricks)
@@ -81,13 +80,21 @@ public class GameManager : ManagedUpdateBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Alpha0)) 
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            SpherePool.Get();
-            SpherePool.Get();
-
-            ballsInGame++;
-            ballsInGame++;
+            CreateSphere();
+            CreateSphere();
         }
+    }
+
+    private void CreateSphere()
+    {
+        GameObject Sphere = SpherePool.Get();
+        ballsInGame++;
+        Sphere.transform.position = transform.position;
+        SphereController sphereController = Sphere.GetComponent<SphereController>();
+        sphereController.SpherePool = SpherePool;
+        CustomUpdateManager.Instance.scriptsBehaviour.Add(sphereController);
+        sphereController.InitialLaunch = false;
     }
 }

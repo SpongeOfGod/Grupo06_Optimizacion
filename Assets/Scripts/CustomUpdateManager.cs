@@ -4,19 +4,29 @@ using UnityEngine;
 
 public class CustomUpdateManager : MonoBehaviour
 {
-    List<ManagedUpdateBehaviour> scriptsBehaviour = new List<ManagedUpdateBehaviour>();
+    public List<ManagedUpdateBehaviour> scriptsBehaviour = new List<ManagedUpdateBehaviour>();
+    public static CustomUpdateManager Instance = null; 
 
     private void Awake()
     {
-        scriptsBehaviour = GetComponents<ManagedUpdateBehaviour>().ToList();
+        if (Instance == null)
+        {
+            Instance = this;
+        }
     }
 
     private void Update()
     {
-        int count = scriptsBehaviour.Count;
-        for (int i = 0; i < count; i++)
+        for (int i = 0; i < scriptsBehaviour.Count; i++)
         {
-            scriptsBehaviour[i].UpdateMe();
+            if (scriptsBehaviour[i] == null) 
+            {
+                scriptsBehaviour.RemoveAt(i);
+                break;
+            }
+
+            if (scriptsBehaviour[i].gameObject.activeSelf)
+                scriptsBehaviour[i].UpdateMe();
         }
     }
 }

@@ -2,21 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LoadSceneButton : MonoBehaviour
+public class LoadSceneButton : MonoBehaviour, IPointerClickHandler
 {
     [SerializeField] string SceneName;
-    Button button;
-
-    private void Awake()
-    {
-        button = GetComponent<Button>();
-        button.onClick.AddListener(LoadScene);
-    }
-
-    private void LoadScene()
+    public void OnPointerClick(PointerEventData eventData)
     {
         if (SceneName == "Exit")
             Application.Quit();

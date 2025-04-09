@@ -12,6 +12,7 @@ public class SphereController : ManagedUpdateBehaviour
     private bool bounceOnce;
     private Vector2 InitialSpeed;
     public ObjectPool<GameObject> SpherePool;
+
     public void LaunchDirection(Vector3 Movedirection)
     {
         InitialSpeed = MoveSpeed;
@@ -76,7 +77,6 @@ public class SphereController : ManagedUpdateBehaviour
 
             if (Vector3.Distance(transform.position, item.gameObject.transform.position) < 2f) 
             {
-                Debug.Log("Searching Collision");
                 if (pos.y - Radius / 2 < item.transform.position.y + item.Size.y / 2 && pos.y + Radius / 2 > item.transform.position.y - item.Size.y / 2 && pos.x + Radius / 2> item.transform.position.x - item.Size.x / 2 && pos.x - Radius / 2 < item.transform.position.x + item.Size.x / 2) 
                 {
                     MoveSpeed.y *= -1;
@@ -116,7 +116,7 @@ public class SphereController : ManagedUpdateBehaviour
         } 
         else if (pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 && GameManager.Instance.ballsInGame > 1) 
         {
-            SpherePool.Release(this.gameObject);
+            GameManager.Instance.SpherePool.Release(this.gameObject);
             GameManager.Instance.ballsInGame--;
         }
 
