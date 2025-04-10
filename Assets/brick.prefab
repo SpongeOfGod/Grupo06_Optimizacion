@@ -10,6 +10,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -58,11 +73,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_Materials.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+      objectReference: {fileID: 2100000, guid: 9962ccc75e2115c43bfe559728198737, type: 2}
+    - target: {fileID: -7511558181221131132, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9962ccc75e2115c43bfe559728198737, type: 2}
     - target: {fileID: 919132149155446097, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_Name
@@ -76,10 +106,6 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1541295366720993840}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2f2e1cab79e70164d883417c6313b34a,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: 2f2e1cab79e70164d883417c6313b34a, type: 3}
 --- !u!1 &3491587750236115902 stripped
 GameObject:
@@ -99,4 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95c20daf6d82ca04a87a7b13d1575687, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Size: {x: 1, y: 1, z: 1}
+  Size: {x: 1, y: 0.45, z: 1}

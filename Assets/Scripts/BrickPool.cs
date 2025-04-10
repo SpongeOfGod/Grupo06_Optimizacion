@@ -5,10 +5,11 @@ public class BrickPool : MonoBehaviour
 {
     [SerializeField] List<BrickController> brickControllers = new List<BrickController>();
     public ObjectPool<GameObject> Pool;
+    public GameObject levelParent;
 
-    private void Awake()
+    public void InitializePool()
     {
-        Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
+        Pool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 50, 50);
     }
     private void OnDestroyPoolObject(GameObject Gobject)
     {
@@ -32,7 +33,7 @@ public class BrickPool : MonoBehaviour
     {
         int index = Random.Range(0, brickControllers.Count);
 
-        GameObject brick = Instantiate(brickControllers[index].gameObject, transform.position, Quaternion.identity);
+        GameObject brick = Instantiate(brickControllers[index].gameObject, levelParent.transform);
 
         return brick;
     }

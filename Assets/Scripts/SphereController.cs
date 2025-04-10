@@ -36,7 +36,7 @@ public class SphereController : ManagedUpdateBehaviour
 
             if ((Input.GetKeyDown(KeyCode.Space) && !InitialLaunch && GameManager.Instance.ballsInGame == 1) || GameManager.Instance.ballsInGame > 1)
             {
-                Vector3 direction = new Vector2(Random.Range(-8.5f, 8.5f), 1);
+                Vector3 direction = new Vector2(Random.Range(-8.5f, 8.5f), 1).normalized;
                 LaunchDirection(direction);
             }
 
@@ -46,88 +46,93 @@ public class SphereController : ManagedUpdateBehaviour
         CalculateCollisions();
     }
 
-
     private void CalculateCollisions()
     {
         Vector2 pos = transform.position;
-
-
-        if (pos.x < GameManager.Instance.XScreenThresshold.x + Radius / 2)
+        if (pos.x - Radius < GameManager.Instance.XScreenThresshold.x)
         {
-            bounceOnce = false;
-            MoveSpeed.x = ( (Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime) * -1);
-            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime));
-            pos.x = GameManager.Instance.XScreenThresshold.x + Radius / 2;
+            MoveDirection.x *= -1;
+            pos.x = GameManager.Instance.XScreenThresshold.x + Radius;
         }
-        else if (pos.x > GameManager.Instance.XScreenThresshold.y - Radius / 2)
+        else if (pos.x + Radius > GameManager.Instance.XScreenThresshold.y)
         {
-            bounceOnce = false;
-            MoveSpeed.x = ((Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime) * -1);
-            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime));
-            pos.x = GameManager.Instance.XScreenThresshold.y - Radius / 2;
+            MoveDirection.x *= -1;
+            pos.x = GameManager.Instance.XScreenThresshold.y - Radius;
         }
-
-        if (pos.y > GameManager.Instance.YScreenThresshold.x - Radius / 2)
+        if (pos.y + Radius > GameManager.Instance.YScreenThresshold.x)
         {
-            bounceOnce = false;
-            MoveSpeed.y = ((Mass * (MoveSpeed.normalized.y / Time.deltaTime) * Time.deltaTime) * -1);
-            MoveSpeed.x =((Mass * (MoveSpeed.normalized.x / Time.deltaTime) * Time.deltaTime));
-            pos.y = GameManager.Instance.YScreenThresshold.x - Radius / 2;
+            MoveDirection.y *= -1;
+            pos.y = GameManager.Instance.YScreenThresshold.x - Radius;
         }
-
-        foreach (var item in GameManager.Instance.Bricks)
+        foreach (var brick in GameManager.Instance.Bricks)
         {
-            if (!item.gameObject.activeSelf) continue;
-
-           float distancetoObject = Vector3.Distance (transform.position, item.gameObject.transform.position);
-            if ( distancetoObject < 2f) 
+            if (!brick.gameObject.activeSelf) continue;
+            Vector2 brickPos = brick.transform.position;
+            Vector2 brickSize = brick.Size;
+            float left = brickPos.x - brickSize.x / 2;
+            float right = brickPos.x + brickSize.x / 2;
+            float top = brickPos.y + brickSize.y / 2;
+            float bottom = brickPos.y - brickSize.y / 2;
+            bool hit = pos.x + Radius > left &&
+                       pos.x - Radius < right &&
+                       pos.y + Radius > bottom &&
+                       pos.y - Radius < top;
+            if (hit)
             {
-                if (pos.y - Radius / 2 < item.transform.position.y + item.Size.y / 2 && pos.y + Radius / 2 > item.transform.position.y - item.Size.y / 2 && pos.x + Radius / 2> item.transform.position.x - item.Size.x / 2 && pos.x - Radius / 2 < item.transform.position.x + item.Size.x / 2) 
+                Vector2 prevPos = pos - MoveDirection * MoveSpeed * Time.deltaTime;
+                bool fromLeft = prevPos.x + Radius <= left;
+                bool fromRight = prevPos.x - Radius >= right;
+                bool fromBelow = prevPos.y + Radius <= bottom;
+                bool fromAbove = prevPos.y - Radius >= top;
+                if (fromLeft || fromRight)
                 {
-                    MoveSpeed.x = ((Mass * ((MoveSpeed.normalized.x * distancetoObject ) / Time.deltaTime) * Time.deltaTime) * -1);
-                    MoveSpeed.y = ((Mass * ((MoveSpeed.normalized.y * distancetoObject ) / Time.deltaTime) * Time.deltaTime));
-                    bounceOnce = false;
-                    item.CollideReaction();
+                    MoveDirection.x *= -1;
                 }
+                else if (fromAbove || fromBelow)
+                {
+                    MoveDirection.y *= -1;
+                }
+                else
+                {
+                    MoveDirection.y *= -1;
+                }
+                brick.CollideReaction();
+                break;
             }
         }
-
-        if (pos.y - Radius / 2 < player.transform.position.y + player.Size.y / 2 && pos.y + Radius / 2 > player.transform.position.y - player.Size.y / 2 && pos.x + Radius / 2 > player.transform.position.x - player.Size.x / 2 && pos.x - Radius / 2 < player.transform.position.x + player.Size.x / 2 && !bounceOnce)
+        if (player != null)
         {
-            bounceOnce = true;
-
-
-            if (pos.x + Radius < player.transform.position.x - player.Size.x / 4)
+            Vector2 playerPos = player.transform.position;
+            Vector2 playerSize = player.Size;
+            bool hit = pos.x + Radius > playerPos.x - playerSize.x / 2 &&
+                       pos.x - Radius < playerPos.x + playerSize.x / 2 &&
+                       pos.y - Radius < playerPos.y + playerSize.y / 2 &&
+                       pos.y + Radius > playerPos.y - playerSize.y / 2;
+            if (hit && !bounceOnce)
             {
-                LeftDirection();
-                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x), MoveSpeed.y * -1);
+                bounceOnce = true;
+                float offset = (pos.x - playerPos.x) / (playerSize.x / 2f);
+                offset = Mathf.Clamp(offset, -1f, 1f);
+                MoveDirection = new Vector2(offset, 1f).normalized;
             }
-            else if (pos.x + Radius > player.transform.position.x - player.Size.x / 4 && pos.x < player.transform.position.x + player.Size.x / 4)
+            else if (!hit)
             {
-                CenterDirection();
-                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x) * -1, MoveSpeed.y * -1);
-            }
-            else if (pos.x + Radius > player.transform.position.x + player.Size.x / 4)
-            {
-                RightDirection();
-                MoveSpeed = new Vector2(Mathf.Abs(MoveSpeed.x) * -1, MoveSpeed.y * -1);
+                bounceOnce = false;
             }
         }
-
-        if ((pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 && GameManager.Instance.ballsInGame == 1) || Input.GetKeyDown(KeyCode.R))
+        if ((pos.y - Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame == 1) || Input.GetKeyDown(KeyCode.R))
         {
             bounceOnce = false;
-            InitialLaunch = !InitialLaunch;
-            MoveSpeed = InitialSpeed;
-        } 
-        else if (pos.y < GameManager.Instance.YScreenThresshold.y + Radius / 2 && GameManager.Instance.ballsInGame > 1) 
-        {
-            GameManager.Instance.SpherePool.Release(this.gameObject);
-            GameManager.Instance.ballsInGame--;
+            InitialLaunch = false;
+            MoveDirection = Vector2.zero;
         }
-
-        pos += MoveDirection.normalized * MoveSpeed * Time.deltaTime;
-
+        else if (pos.y - Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
+        {
+            GameManager.Instance.SpherePool.Release(gameObject);
+            GameManager.Instance.ballsInGame--;
+            return;
+        }
+        pos += MoveDirection * MoveSpeed * Time.deltaTime;
         transform.position = pos;
     }
 
