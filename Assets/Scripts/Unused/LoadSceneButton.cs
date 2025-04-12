@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class LoadSceneButton : MonoBehaviour, IPointerClickHandler
 {
-    [SerializeField] string SceneName;
+    public string SceneName;
     public void OnPointerClick(PointerEventData eventData)
     {
         if (SceneName == "Exit")

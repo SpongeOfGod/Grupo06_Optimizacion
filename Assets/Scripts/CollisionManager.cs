@@ -1,0 +1,107 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CollisionManager : ManagedUpdateBehaviourNoMono
+{
+    private bool bounceOnce;
+    List<SphereController> sphereControllers = new List<SphereController>();
+    public override void UpdateMe()
+    {
+        sphereControllers = GameManager.Instance.SphereControllers;
+
+        for (int i = 0; i < sphereControllers.Count; i++)
+        {
+            SphereController controller = sphereControllers[i];
+
+            Vector2 pos = controller.GameObject.transform.position;
+
+            if (controller.GameObject.transform.position.x - controller.Radius < GameManager.Instance.XScreenThresshold.x)
+            {
+                controller.MoveDirection.x *= -1;
+                pos.x = GameManager.Instance.XScreenThresshold.x + controller.Radius;
+            }
+            else if (pos.x + controller.Radius > GameManager.Instance.XScreenThresshold.y)
+            {
+                controller.MoveDirection.x *= -1;
+                pos.x = GameManager.Instance.XScreenThresshold.y - controller.Radius;
+            }
+            if (pos.y + controller.Radius > GameManager.Instance.YScreenThresshold.x)
+            {
+                controller.MoveDirection.y *= -1;
+                pos.y = GameManager.Instance.YScreenThresshold.x - controller.Radius;
+            }
+            foreach (var brick in GameManager.Instance.Bricks)
+            {
+                if (!brick.GameObject.activeSelf) continue;
+                Vector2 brickPos = brick.GameObject.transform.position;
+                Vector2 brickSize = brick.Size;
+                float left = brickPos.x - brickSize.x / 2;
+                float right = brickPos.x + brickSize.x / 2;
+                float top = brickPos.y + brickSize.y / 2;
+                float bottom = brickPos.y - brickSize.y / 2;
+                bool hit = pos.x + controller.Radius > left &&
+                           pos.x - controller.Radius < right &&
+                           pos.y + controller.Radius > bottom &&
+                           pos.y - controller.Radius < top;
+                if (hit)
+                {
+                    Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
+                    bool fromLeft = prevPos.x + controller.Radius <= left;
+                    bool fromRight = prevPos.x - controller.Radius >= right;
+                    bool fromBelow = prevPos.y + controller.Radius <= bottom;
+                    bool fromAbove = prevPos.y - controller.Radius >= top;
+                    if (fromLeft || fromRight)
+                    {
+                        controller.MoveDirection.x *= -1;
+                    }
+                    else if (fromAbove || fromBelow)
+                    {
+                        controller.MoveDirection.y *= -1;
+                    }
+                    else
+                    {
+                        controller.MoveDirection.y *= -1;
+                    }
+                    brick.CollideReaction();
+                    break;
+                }
+            }
+            if (controller.player != null)
+            {
+                Vector2 playerPos = controller.player.GameObject.transform.position;
+                Vector2 playerSize = controller.player.Size;
+                bool hit = pos.x + controller.Radius > playerPos.x - playerSize.x / 2 &&
+                pos.x - controller.Radius < playerPos.x + playerSize.x / 2 &&
+                pos.y - controller.Radius < playerPos.y + playerSize.y / 2 &&
+                           pos.y + controller.Radius > playerPos.y - playerSize.y / 2;
+                if (hit && !bounceOnce)
+                {
+                    bounceOnce = true;
+                    float offset = (pos.x - playerPos.x) / (playerSize.x / 2f);
+                    offset = Mathf.Clamp(offset, -1f, 1f);
+                    controller.MoveDirection = new Vector2(offset, 1f).normalized;
+                }
+                else if (!hit)
+                {
+                    bounceOnce = false;
+                }
+            }
+            if ((pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame == 1) || Input.GetKeyDown(KeyCode.R))
+            {
+                bounceOnce = false;
+                controller.InitialLaunch = false;
+                controller.MoveDirection = Vector2.zero;
+            }
+            else if (pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
+            {
+                if (controller.GameObject == null || !controller.GameObject.activeSelf) continue;
+
+                controller.GameObject.transform.position = pos;
+                GameManager.Instance.SpherePool.Release(controller.GameObject);
+                GameManager.Instance.ballsInGame--;
+                continue;
+            }
+            controller.GameObject.transform.position = pos;
+        }
+    }
+}

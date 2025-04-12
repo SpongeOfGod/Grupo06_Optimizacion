@@ -16,14 +16,14 @@ public class BallManager : ManagedUpdateBehaviourNoMono
             SphereController controller = sphereControllers[i];
             if (!controller.InitialLaunch) 
             {
-                if (!player)
-                    player = GameManager.Instance.PlayerRect;
+                player = GameManager.Instance.Player.GameObject;
+                controller.player = GameManager.Instance.Player;
 
                 if (controller.InitialSpeed != Vector2.zero)
                     controller.MoveSpeed = controller.InitialSpeed;
 
                 Vector3 playerPos = player.transform.position;
-                controller.sphere.transform.position = new Vector3(playerPos.x, controller.InitialYOffset);
+                controller.GameObject.transform.position = new Vector3(playerPos.x, controller.InitialYOffset);
 
                 if ((Input.GetKeyDown(KeyCode.Space) && !controller.InitialLaunch && GameManager.Instance.ballsInGame == 1) || GameManager.Instance.ballsInGame > 1)
                 {

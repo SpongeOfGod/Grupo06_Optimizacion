@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class TitleAnimation : ManagedUpdateBehaviour
+public class TitleAnimation : ManagedUpdateBehaviourNoMono
 {
-    [SerializeField] float RotationSpeed;
+    float RotationSpeed = -80;
 
     public override void UpdateMe()
     {
-        transform.Rotate(0, RotationSpeed * Time.deltaTime, 0);
+        gameObject.transform.Rotate(0, RotationSpeed * Time.deltaTime, 0);
     }
 }

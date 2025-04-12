@@ -2,41 +2,38 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class SplashText : ManagedUpdateBehaviour
+public class SplashText : ManagedUpdateBehaviourNoMono
 {
-    private TextMeshProUGUI text;
+    public TextMeshProUGUI text;
+    Color initialColor;
+    Color endColor;
+    public bool fadeIn;
+    public bool fadeOut;
 
-    private void Awake()
+    public void Initialize()
     {
-        text = GetComponent<TextMeshProUGUI>();
-    }
-    public IEnumerator FadeIn(float secondsToEnd) 
-    {
-        float elapsedTime = 0;
-        Color initialColor = text.color;
+        initialColor = text.color;
         Color endColor = new Color(initialColor.r, initialColor.g, initialColor.b, 1);
-        while (elapsedTime < secondsToEnd) 
+    }
+    public override void UpdateMe()
+    {
+
+        if (fadeIn) 
         {
-            elapsedTime += Time.deltaTime;
-            text.color = Color.Lerp(initialColor, endColor, elapsedTime / secondsToEnd);
-            yield return null;
+            text.color = Color.Lerp(initialColor, endColor, Time.time / 0.5f);
         }
-        text.color = endColor;
+        else if (fadeOut) 
+        {
+            text.color = Color.Lerp(endColor, initialColor, Time.time / 0.5f);
+        }
+    }
+    public void FadeIn() 
+    {
+        fadeIn = true;
     }
 
-    public IEnumerator FadeOut(float secondsToEnd)
+    public void FadeOut()
     {
-        float elapsedTime = 0;
-        Color initialColor = text.color;
-        Color endColor = new Color(initialColor.r, initialColor.g, initialColor.b, 0);
-        while (elapsedTime < secondsToEnd)
-        {
-            elapsedTime += Time.deltaTime;
-            text.color = Color.Lerp(initialColor, endColor, elapsedTime / secondsToEnd);
-            yield return null;
-        }
-        text.color = endColor;
-        StopAllCoroutines();
-        Destroy(gameObject);
+        fadeOut = true;
     }
 }

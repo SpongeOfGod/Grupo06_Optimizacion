@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
-public class BrickPool : MonoBehaviour
+public class BrickPool : ManagedUpdateBehaviourNoMono
 {
-    [SerializeField] List<BrickController> brickControllers = new List<BrickController>();
+    [SerializeField] List<GameObject> brickControllers = new List<GameObject>();
     public ObjectPool<GameObject> Pool;
     public GameObject levelParent;
 
@@ -13,7 +13,7 @@ public class BrickPool : MonoBehaviour
     }
     private void OnDestroyPoolObject(GameObject Gobject)
     {
-        Destroy(Gobject);
+        //Destroy(Gobject);
     }
 
     private void OnReturnedToPool(GameObject Gobject)
@@ -33,9 +33,9 @@ public class BrickPool : MonoBehaviour
     {
         int index = Random.Range(0, brickControllers.Count);
 
-        GameObject brick = Instantiate(brickControllers[index].gameObject, levelParent.transform);
+        //GameObject brick = Instantiate(brickControllers[index], levelParent.transform);
 
-        return brick;
+        return null;
     }
 
 }

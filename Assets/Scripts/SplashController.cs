@@ -4,33 +4,40 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SplashController : ManagedUpdateBehaviour
+public class SplashController : ManagedUpdateBehaviourNoMono
 {
     public List<SplashText> splashTexts = new List<SplashText>();
     public float fadeTime;
     public float waitTime = 1f;
-    event Action splashEnd;
-    private void Awake()
+    public float elapsedTime = 0;
+    public void Initialize()
     {
-        StartCoroutine(Splash());
+
     }
 
-    IEnumerator Splash() 
+    public override void UpdateMe()
     {
-        foreach (var item in splashTexts)
-        {
-            StartCoroutine(item.FadeIn(fadeTime));
-            yield return new WaitForSeconds(waitTime);
-        }
-
-        yield return new WaitForSeconds(waitTime);
+        elapsedTime += Time.deltaTime;
 
         foreach (var item in splashTexts)
         {
-            StartCoroutine(item.FadeOut(fadeTime));
+            if (elapsedTime >= 0.5 && !item.fadeIn)
+            {
+                elapsedTime = 0;
+                item.FadeIn();
+            }
         }
-        yield return new WaitForSeconds(fadeTime + waitTime);
-        StopAllCoroutines();
-        SceneManager.LoadScene("MainMenu");
+    }
+    public void Splash() 
+    {
+        //yield return new WaitForSeconds(waitTime);
+
+        //foreach (var item in splashTexts)
+        //{
+        //    StartCoroutine(item.FadeOut(fadeTime));
+        //}
+        //yield return new WaitForSeconds(fadeTime + waitTime);
+        //StopAllCoroutines();
+        //SceneManager.LoadScene("MainMenu");
     }
 }
