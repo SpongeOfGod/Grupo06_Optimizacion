@@ -1,17 +1,18 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class SphereController : ManagedUpdateBehaviour
+public class SphereController : ManagedUpdateBehaviourNoMono
 {
+    public GameObject sphere;
     Vector2 MoveDirection;
-    public Vector2 MoveSpeed;
+    public Vector2 MoveSpeed = new Vector2(12, 12);
     public bool InitialLaunch;
-    public float Radius;
+    public float Radius = 0.25f;
     public float Mass = 20;
-    public float InitialYOffset;
+    public float InitialYOffset = -3.93f;
     PlayerMovement player;
     private bool bounceOnce;
-    private Vector2 InitialSpeed;
+    public Vector2 InitialSpeed;
     public ObjectPool<GameObject> SpherePool;
 
     public void LaunchDirection(Vector3 Movedirection)
@@ -23,32 +24,16 @@ public class SphereController : ManagedUpdateBehaviour
 
     public override void UpdateMe()
     {
-        if (!InitialLaunch)
-        {
-            if (!player)
-                player = GameManager.Instance.Player;
-
-            if (InitialSpeed != Vector2.zero)
-                MoveSpeed = InitialSpeed;
-
-            Vector3 playerPos = player.transform.position;
-            transform.position = new Vector3(playerPos.x, InitialYOffset);
-
-            if ((Input.GetKeyDown(KeyCode.Space) && !InitialLaunch && GameManager.Instance.ballsInGame == 1) || GameManager.Instance.ballsInGame > 1)
-            {
-                Vector3 direction = new Vector2(Random.Range(-8.5f, 8.5f), 1).normalized;
-                LaunchDirection(direction);
-            }
-
-            return;
-        }
+        if (!InitialLaunch) return;
 
         CalculateCollisions();
     }
 
     private void CalculateCollisions()
     {
-        Vector2 pos = transform.position;
+        if (sphere == null || !sphere.activeSelf) return;
+
+        Vector2 pos = sphere.transform.position;
         if (pos.x - Radius < GameManager.Instance.XScreenThresshold.x)
         {
             MoveDirection.x *= -1;
@@ -128,36 +113,12 @@ public class SphereController : ManagedUpdateBehaviour
         }
         else if (pos.y - Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
         {
-            GameManager.Instance.SpherePool.Release(gameObject);
+            GameManager.Instance.SpherePool.Release(sphere);
             GameManager.Instance.ballsInGame--;
             return;
         }
+
         pos += MoveDirection * MoveSpeed * Time.deltaTime;
-        transform.position = pos;
-    }
-
-    public bool CollidesWith() 
-    {
-        return true;
-    }
-
-    private void LeftDirection() 
-    {
-        MoveDirection = new Vector2(Random.Range(-8.5f, -3.5f), 1);
-    }
-
-    private void CenterDirection()
-    {
-        MoveDirection = new Vector2(Random.Range(-1.5f, 1.5f), 1);
-    }
-
-    private void RightDirection()
-    {
-        MoveDirection = new Vector2(Random.Range(3.5f, 8.5f), 1);
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position,Radius);
+        sphere.transform.position = pos;
     }
 }

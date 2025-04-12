@@ -7,37 +7,45 @@ public class GameManager : ManagedUpdateBehaviour
     public Vector2 XScreenThresshold;
     public Vector2 YScreenThresshold;
     public PlayerMovement Player;
-    public List<MaterialPropertyBlock> BrickMaterials = new List<MaterialPropertyBlock>();
-
-    public GameObject prefabBall;
-    public GameObject prefabBrick;
-
     public List<Vector3> BrickPositions = new List<Vector3>();
-
-    private int numberOfBricks;
-
-    public ObjectPool<GameObject> SpherePool;
-    public BrickPool brickPool;
+    public List<MaterialPropertyBlock> BrickMaterials = new List<MaterialPropertyBlock>();
     public Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>(); 
     Dictionary<GameObject, Renderer> bricksMaterial = new Dictionary<GameObject, Renderer>();
     public List<BrickController> Bricks = new List<BrickController>();
+
+
+    private int numberOfBricks;
+    public ObjectPool<GameObject> SpherePool;
+    public BrickPool brickPool;
+
+
     public int ballsInGame;
+    bool initialized;
 
     public static GameManager Instance;
+
+    [Header("Prefabs")]
+
+    public GameObject PlayerRect;
+    public GameObject prefabBall;
+    public GameObject prefabBrick;
+
+    [Header("Managers")]
+
+    [SerializeField] BallManager ballManager;
+
+    List<SphereController> sphereControllers = new List<SphereController>();
+    public List<SphereController> SphereControllers { get => sphereControllers; }
+
     private void Awake()
     {
         Instance = this;
-        //if (Instance == null) 
-        //{
-        //    Instance = this;
-        //} else if (Instance != this) 
-        //{
-        //    Destroy(gameObject);
-        //}
 
         brickPool = GetComponent<BrickPool>();
 
         SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
+
+        ballManager = new BallManager();
 
         for (int i = 0; i < BrickPositions.Count; i++)
         {
@@ -128,6 +136,10 @@ public class GameManager : ManagedUpdateBehaviour
 
     public override void UpdateMe()
     {
+        if (!initialized) 
+        {
+            CustomUpdateManager.Instance.scriptsBehaviourNoMono.Add(ballManager);
+        }
 
         if (ballsInGame == 0)
             CreateSphere();
@@ -165,11 +177,14 @@ public class GameManager : ManagedUpdateBehaviour
     private void CreateSphere()
     {
         GameObject Sphere = SpherePool.Get();
-        ballsInGame++;
-        Sphere.transform.position = transform.position;
-        SphereController sphereController = Sphere.GetComponent<SphereController>();
+        SphereController sphereController = new SphereController();
+        sphereController.sphere = Sphere;
         sphereController.SpherePool = SpherePool;
-        CustomUpdateManager.Instance.scriptsBehaviour.Add(sphereController);
+        ballsInGame++;
+        //Sphere.transform.position = transform.position;
+        sphereControllers.Add(sphereController);
+        sphereController.SpherePool = SpherePool;
+        CustomUpdateManager.Instance.scriptsBehaviourNoMono.Add(sphereController);
         sphereController.InitialLaunch = false;
     }
 }

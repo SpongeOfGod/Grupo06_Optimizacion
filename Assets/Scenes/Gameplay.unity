@@ -1002,10 +1002,6 @@ MonoBehaviour:
   XScreenThresshold: {x: -8.5, y: 8.5}
   YScreenThresshold: {x: 5.6, y: -5.3}
   Player: {fileID: 1074905681}
-  prefabBall: {fileID: 5315212559060358639, guid: d41ed74013aea244092a1c6a8c10eef4,
-    type: 3}
-  prefabBrick: {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070,
-    type: 3}
   BrickPositions:
   - {x: -3.45, y: 3.75, z: 0}
   - {x: -2.3, y: 3.75, z: 0}
@@ -1035,9 +1031,14 @@ MonoBehaviour:
   - {x: 1.15, y: 1.9, z: 0}
   - {x: 2.3, y: 1.9, z: 0}
   - {x: 3.45, y: 1.9, z: 0}
-  brickPool: {fileID: 1328385324}
   Bricks: []
+  brickPool: {fileID: 1328385324}
   ballsInGame: 0
+  PlayerRect: {fileID: 1074905680}
+  prefabBall: {fileID: 5315212559060358639, guid: d41ed74013aea244092a1c6a8c10eef4,
+    type: 3}
+  prefabBrick: {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070,
+    type: 3}
 --- !u!4 &1328385323
 Transform:
   m_ObjectHideFlags: 0
