@@ -12,7 +12,10 @@ public class SplashController : ManagedUpdateBehaviourNoMono
     public float elapsedTime = 0;
     public void Initialize()
     {
-
+        foreach (var item in splashTexts)
+        {
+            item.Initialize();
+        }
     }
 
     public override void UpdateMe()

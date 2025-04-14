@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SplashText : ManagedUpdateBehaviourNoMono
 {
-    public TextMeshProUGUI text;
+    public TextMeshProUGUI TMPro;
     Color initialColor;
     Color endColor;
     public bool fadeIn;
@@ -12,19 +12,18 @@ public class SplashText : ManagedUpdateBehaviourNoMono
 
     public void Initialize()
     {
-        initialColor = text.color;
+        initialColor = TMPro.color;
         Color endColor = new Color(initialColor.r, initialColor.g, initialColor.b, 1);
     }
     public override void UpdateMe()
     {
-
         if (fadeIn) 
         {
-            text.color = Color.Lerp(initialColor, endColor, Time.time / 0.5f);
+            TMPro.color = Color.Lerp(initialColor, endColor, Time.time / 0.5f);
         }
         else if (fadeOut) 
         {
-            text.color = Color.Lerp(endColor, initialColor, Time.time / 0.5f);
+            TMPro.color = Color.Lerp(endColor, initialColor, Time.time / 0.5f);
         }
     }
     public void FadeIn() 

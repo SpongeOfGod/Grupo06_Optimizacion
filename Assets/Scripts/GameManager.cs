@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
@@ -24,6 +25,9 @@ public class GameManager : CustomUpdateManager
     public List<SphereController> SphereControllers { get => sphereControllers; }
 
     bool initialized;
+
+    [Header("SplashScreen")]
+    [SerializeField] List<TextMeshProUGUI> texts;
 
     [Header("MainMenu")]
     [SerializeField] GameObject TitleObject;
@@ -88,6 +92,8 @@ public class GameManager : CustomUpdateManager
         collisionManager = new CollisionManager();
         levelManager = new LevelManager();
 
+        //if 
+
         levelManager.InitializeLevel();
     }
 
@@ -125,6 +131,24 @@ public class GameManager : CustomUpdateManager
 
             switch (sceneName)
             {
+                case "SplashScreen":
+                    List<SplashText> list = new List<SplashText>();
+                    foreach (var  item in texts)
+                    {
+                        SplashText text = new SplashText();
+                        text.TMPro = item;
+                        list.Add(text);
+
+                        scriptsBehaviourNoMono.Add(text);
+                    }
+
+                    SplashController splashController = new SplashController();
+                    splashController.splashTexts = list;
+                    scriptsBehaviourNoMono.Add(splashController);
+                    splashController.Initialize();
+                    Debug.Log("hi");
+                    break;
+
                 case "MainMenu":
                     if (TitleObject != null)
                     {
