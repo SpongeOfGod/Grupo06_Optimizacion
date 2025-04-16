@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameManager : CustomUpdateManager
 {
@@ -27,7 +27,7 @@ public class GameManager : CustomUpdateManager
     bool initialized;
 
     [Header("SplashScreen")]
-    [SerializeField] List<TextMeshProUGUI> texts;
+    [SerializeField] List<Image> texts;
 
     [Header("MainMenu")]
     [SerializeField] GameObject TitleObject;
@@ -44,6 +44,9 @@ public class GameManager : CustomUpdateManager
     BallManager ballManager;
     CollisionManager collisionManager;
     LevelManager levelManager;
+
+    [SerializeField] GameObject[] powerUpControllers;
+    public List<PowerUpController> activePowerUps = new List<PowerUpController>();
 
 
     public void InitializePool()
@@ -77,6 +80,30 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
+    public GameObject CreatePowerUp() 
+    {
+        int index = Random.Range(0, powerUpControllers.Length - 1);
+
+        GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
+
+        PowerUpController powerUpController = new MultiBallPowerUp();
+
+        powerUpController.GameObject = powerUp;
+
+        scriptsBehaviourNoMono.Add(powerUpController);
+
+        activePowerUps.Add(powerUpController);
+
+        return powerUpController.GameObject;
+    }
+
+    public void DestroyPowerUp(PowerUpController powerUp) 
+    {
+        scriptsBehaviourNoMono.Remove(powerUp);
+        activePowerUps.Remove(powerUp);
+        Destroy(powerUp.GameObject);
+    }
+
     private void Awake()
     {
         sceneName = SceneManager.GetActiveScene().name;
@@ -91,8 +118,6 @@ public class GameManager : CustomUpdateManager
         ballManager = new BallManager();
         collisionManager = new CollisionManager();
         levelManager = new LevelManager();
-
-        //if 
 
         levelManager.InitializeLevel();
     }
@@ -133,7 +158,7 @@ public class GameManager : CustomUpdateManager
             {
                 case "SplashScreen":
                     List<SplashText> list = new List<SplashText>();
-                    foreach (var  item in texts)
+                    foreach (var item in texts)
                     {
                         SplashText text = new SplashText();
                         text.TMPro = item;
@@ -146,7 +171,6 @@ public class GameManager : CustomUpdateManager
                     splashController.splashTexts = list;
                     scriptsBehaviourNoMono.Add(splashController);
                     splashController.Initialize();
-                    Debug.Log("hi");
                     break;
 
                 case "MainMenu":
@@ -192,5 +216,11 @@ public class GameManager : CustomUpdateManager
             levelManager.CreateSphere();
         }
     #endif
+    }
+
+    public void MultipleBallEffect() 
+    {
+        levelManager.CreateSphere();
+        levelManager.CreateSphere();
     }
 }
