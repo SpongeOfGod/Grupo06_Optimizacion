@@ -146,7 +146,6 @@ public class GameManager : CustomUpdateManager
                     splashController.splashTexts = list;
                     scriptsBehaviourNoMono.Add(splashController);
                     splashController.Initialize();
-                    Debug.Log("hi");
                     break;
 
                 case "MainMenu":

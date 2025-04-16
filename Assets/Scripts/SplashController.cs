@@ -7,9 +7,9 @@ using UnityEngine.SceneManagement;
 public class SplashController : ManagedUpdateBehaviourNoMono
 {
     public List<SplashText> splashTexts = new List<SplashText>();
-    public float fadeTime;
     public float waitTime = 1f;
     public float elapsedTime = 0;
+    private float fadeTime = 0.5f * 5f;
     public void Initialize()
     {
         foreach (var item in splashTexts)
@@ -22,12 +22,28 @@ public class SplashController : ManagedUpdateBehaviourNoMono
     {
         elapsedTime += Time.deltaTime;
 
-        foreach (var item in splashTexts)
+        if (elapsedTime >= fadeTime + 1)
+            SceneManager.LoadScene("MainMenu");
+
+        if (elapsedTime >= fadeTime)
         {
-            if (elapsedTime >= 0.5 && !item.fadeIn)
+            foreach (var item in splashTexts)
             {
-                elapsedTime = 0;
-                item.FadeIn();
+                if (!item.fadeOut)
+                {
+                    item.FadeOut();
+                }
+            }
+        }
+        else
+        {
+            foreach (var item in splashTexts)
+            {
+                if (elapsedTime >= 0.5 && !item.fadeIn)
+                {
+                    //elapsedTime = 0;
+                    item.FadeIn();
+                }
             }
         }
     }
