@@ -161,7 +161,7 @@ public class GameManager : CustomUpdateManager
                     foreach (var item in texts)
                     {
                         SplashText text = new SplashText();
-                        text.TMPro = item;
+                        text.ImageColor = item;
                         list.Add(text);
 
                         scriptsBehaviourNoMono.Add(text);

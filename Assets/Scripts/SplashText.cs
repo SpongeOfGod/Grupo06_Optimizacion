@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class SplashText : ManagedUpdateBehaviourNoMono
 {
-    public Image TMPro;
+    public Image ImageColor;
     Color initialColor;
     Color endColor;
     public bool fadeIn;
@@ -11,7 +11,7 @@ public class SplashText : ManagedUpdateBehaviourNoMono
     private float elapsedFadeOutTime = 0;
     public void Initialize()
     {
-        initialColor = TMPro.color;
+        initialColor = ImageColor.color;
         endColor = new Color(initialColor.r, initialColor.g, initialColor.b, 1);
     }
     public override void UpdateMe()
@@ -19,12 +19,12 @@ public class SplashText : ManagedUpdateBehaviourNoMono
         if (fadeIn && elapsedFadeInTime < 0.5f) 
         {
             elapsedFadeInTime += Time.deltaTime;
-            TMPro.color = Color.Lerp(initialColor, endColor, elapsedFadeInTime / 0.5f);
+            ImageColor.color = Color.Lerp(initialColor, endColor, elapsedFadeInTime / 0.5f);
         }
         else if (fadeOut && elapsedFadeOutTime < 0.5f) 
         {
             elapsedFadeOutTime += Time.deltaTime;
-            TMPro.color = Color.Lerp(endColor, initialColor, elapsedFadeOutTime / 0.5f);
+            ImageColor.color = Color.Lerp(endColor, initialColor, elapsedFadeOutTime / 0.5f);
         }
     }
     public void FadeIn() 
