@@ -794,7 +794,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20da30ecc3828a34499180891f859001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scriptsBehaviour: []
   XScreenThresshold: {x: -8.5, y: 8.5}
   YScreenThresshold: {x: 5.6, y: -5.3}
   BrickPositions:
@@ -828,12 +827,16 @@ MonoBehaviour:
   - {x: 3.45, y: 1.9, z: 0}
   levelParent: {fileID: 1364670820}
   ballsInGame: 0
+  texts: []
   TitleObject: {fileID: 0}
+  ButtonSelect: {fileID: 0}
   PlayerRect: {fileID: 1074905680}
   prefabBall: {fileID: 5315212559060358639, guid: d41ed74013aea244092a1c6a8c10eef4,
     type: 3}
   bricksPrefab:
   - {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070, type: 3}
+  powerUpControllers:
+  - {fileID: 4472769436513972227, guid: dcb3fcaa75d38c747ac02d4ea7e4cab1, type: 3}
 --- !u!4 &1328385323
 Transform:
   m_ObjectHideFlags: 0
@@ -859,7 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1364670821}
   m_Layer: 0
-  m_Name: BrickLevelParent
+  m_Name: LevelParent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

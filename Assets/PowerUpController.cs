@@ -1,0 +1,20 @@
+using UnityEngine;
+
+public class PowerUpController : ManagedUpdateBehaviourNoMono
+{
+    float speedScale = 5f;
+    public Vector3 size = Vector3.one;
+    public override void UpdateMe()
+    {
+        Vector3 pos = gameObject.transform.position;
+
+        pos.y += -1 * speedScale * Time.deltaTime;
+
+        gameObject.transform.position = pos;
+    }
+
+    public virtual void PowerUpEffect() 
+    {
+    
+    }
+}

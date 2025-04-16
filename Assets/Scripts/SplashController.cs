@@ -47,16 +47,4 @@ public class SplashController : ManagedUpdateBehaviourNoMono
             }
         }
     }
-    public void Splash() 
-    {
-        //yield return new WaitForSeconds(waitTime);
-
-        //foreach (var item in splashTexts)
-        //{
-        //    StartCoroutine(item.FadeOut(fadeTime));
-        //}
-        //yield return new WaitForSeconds(fadeTime + waitTime);
-        //StopAllCoroutines();
-        //SceneManager.LoadScene("MainMenu");
-    }
 }

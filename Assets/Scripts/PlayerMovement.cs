@@ -5,7 +5,7 @@ using UnityEngine.XR;
 
 public class PlayerMovement : ManagedUpdateBehaviourNoMono
 {
-    [SerializeField] float speedScale = 10.11f;
+    float speedScale = 10.11f;
 
     public Vector3 Size = new Vector3(2.19f, 0.2f, 2f);
     public override void UpdateMe()

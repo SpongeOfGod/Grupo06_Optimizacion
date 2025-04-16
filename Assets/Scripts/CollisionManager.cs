@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 public class CollisionManager : ManagedUpdateBehaviourNoMono
 {
     private bool bounceOnce;
     List<SphereController> sphereControllers = new List<SphereController>();
+    List<PowerUpController> powerUpControllers = new List<PowerUpController>();
     public override void UpdateMe()
     {
         sphereControllers = GameManager.Instance.SphereControllers;
@@ -102,6 +104,34 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 continue;
             }
             controller.GameObject.transform.position = pos;
+        }
+
+        powerUpControllers = GameManager.Instance.activePowerUps;
+        PlayerMovement player = GameManager.Instance.Player;
+
+        for (int i = 0; i < powerUpControllers.Count; i++)
+        {
+            PowerUpController controller = powerUpControllers[i];
+            Vector3 pos = controller.GameObject.transform.position;
+
+            if (player != null)
+            {
+                Vector2 playerPos = player.GameObject.transform.position;
+                Vector2 playerSize = player.Size;
+                bool hit = pos.x + controller.size.x / 2 > playerPos.x - playerSize.x / 2 &&
+                pos.x - controller.size.x / 2 < playerPos.x + playerSize.x / 2 &&
+                pos.y - controller.size.y / 2 < playerPos.y + playerSize.y / 2 &&
+                           pos.y + controller.size.y / 2 > playerPos.y - playerSize.y / 2;
+                if (hit)
+                {
+                    controller.PowerUpEffect();
+                    GameManager.Instance.DestroyPowerUp(controller);
+                }
+            }
+            if (pos.y - controller.size.y / 2 < GameManager.Instance.YScreenThresshold.y || Input.GetKeyDown(KeyCode.R))
+            {
+                GameManager.Instance.DestroyPowerUp(controller);
+            }
         }
     }
 }

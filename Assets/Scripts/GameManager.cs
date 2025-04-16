@@ -45,6 +45,9 @@ public class GameManager : CustomUpdateManager
     CollisionManager collisionManager;
     LevelManager levelManager;
 
+    [SerializeField] GameObject[] powerUpControllers;
+    public List<PowerUpController> activePowerUps = new List<PowerUpController>();
+
 
     public void InitializePool()
     {
@@ -77,6 +80,30 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
+    public GameObject CreatePowerUp() 
+    {
+        int index = Random.Range(0, powerUpControllers.Length - 1);
+
+        GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
+
+        PowerUpController powerUpController = new MultiBallPowerUp();
+
+        powerUpController.GameObject = powerUp;
+
+        scriptsBehaviourNoMono.Add(powerUpController);
+
+        activePowerUps.Add(powerUpController);
+
+        return powerUpController.GameObject;
+    }
+
+    public void DestroyPowerUp(PowerUpController powerUp) 
+    {
+        scriptsBehaviourNoMono.Remove(powerUp);
+        activePowerUps.Remove(powerUp);
+        Destroy(powerUp.GameObject);
+    }
+
     private void Awake()
     {
         sceneName = SceneManager.GetActiveScene().name;
@@ -91,8 +118,6 @@ public class GameManager : CustomUpdateManager
         ballManager = new BallManager();
         collisionManager = new CollisionManager();
         levelManager = new LevelManager();
-
-        //if 
 
         levelManager.InitializeLevel();
     }
@@ -191,5 +216,11 @@ public class GameManager : CustomUpdateManager
             levelManager.CreateSphere();
         }
     #endif
+    }
+
+    public void MultipleBallEffect() 
+    {
+        levelManager.CreateSphere();
+        levelManager.CreateSphere();
     }
 }
