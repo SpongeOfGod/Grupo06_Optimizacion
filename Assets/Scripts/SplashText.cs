@@ -11,6 +11,7 @@ public class SplashText : ManagedUpdateBehaviourNoMono
     private float elapsedFadeOutTime = 0;
     public void Initialize()
     {
+        gameObject = ImageColor.gameObject;
         initialColor = ImageColor.color;
         endColor = new Color(initialColor.r, initialColor.g, initialColor.b, 1);
     }

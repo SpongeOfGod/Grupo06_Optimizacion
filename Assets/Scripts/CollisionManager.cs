@@ -21,6 +21,12 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
         {
             SphereController controller = sphereControllers[i];
 
+            if (!controller.GameObject) 
+            {
+                GameManager.Instance.SphereControllers.Remove(controller);
+                continue;
+            }
+
             Vector2 pos = controller.GameObject.transform.position;
 
             if (controller.GameObject.transform.position.x - controller.Radius < GameManager.Instance.XScreenThresshold.x)

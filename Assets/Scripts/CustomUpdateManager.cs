@@ -10,10 +10,9 @@ public class CustomUpdateManager : MonoBehaviour
     {
         for (int i = 0; i < scriptsBehaviourNoMono.Count; i++)
         {
-            if (scriptsBehaviourNoMono[i] == null)
+            if (scriptsBehaviourNoMono[i] == null || scriptsBehaviourNoMono[i].GameObject == null)
             {
                 scriptsBehaviourNoMono.RemoveAt(i);
-                break;
             }
             else 
             {

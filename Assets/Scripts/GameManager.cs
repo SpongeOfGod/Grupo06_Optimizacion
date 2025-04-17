@@ -48,6 +48,8 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject[] powerUpControllers;
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
 
+    public MaterialPropertyBlock BallMaterialBlock;
+
 
     public void InitializePool()
     {
@@ -119,6 +121,13 @@ public class GameManager : CustomUpdateManager
         collisionManager = new CollisionManager();
         levelManager = new LevelManager();
 
+        ballManager.GameObject = gameObject;
+        collisionManager.GameObject = gameObject;
+        levelManager.GameObject = gameObject;
+
+        BallMaterialBlock = new MaterialPropertyBlock();
+        BallMaterialBlock.SetColor("_Color", Color.white);
+
         levelManager.InitializeLevel();
     }
 
@@ -169,6 +178,7 @@ public class GameManager : CustomUpdateManager
 
                     SplashController splashController = new SplashController();
                     splashController.splashTexts = list;
+                    splashController.GameObject = gameObject;
                     scriptsBehaviourNoMono.Add(splashController);
                     splashController.Initialize();
                     break;
