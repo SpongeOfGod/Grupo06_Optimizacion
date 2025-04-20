@@ -1,13 +1,11 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Image = UnityEngine.UI.Image;
+using System.Collections;
 
-public class GameManager : CustomUpdateManager //GameManager.powerUpControllers
+public class GameManager : CustomUpdateManager
 {
     public static GameManager Instance;
 
@@ -48,10 +46,12 @@ public class GameManager : CustomUpdateManager //GameManager.powerUpControllers
     CollisionManager collisionManager;
     LevelManager levelManager;
 
-    [SerializeField] GameObject[] powerUpControllers;
+    [SerializeField] List<GameObject> powerUpControllers;
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
 
     public MaterialPropertyBlock BallMaterialBlock;
+
+    public bool onPowerUpMode;
 
 
     public void InitializePool()
@@ -87,27 +87,36 @@ public class GameManager : CustomUpdateManager //GameManager.powerUpControllers
 
     public GameObject CreatePowerUp() 
     {
-        int index = Random.Range(0, powerUpControllers.Length /*- 1*/);
+        int index = Random.Range(0, powerUpControllers.Count);
 
         GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
+        PowerUpController powerUpController = null;
 
-        PowerUpController powerUpController; //= new MultiBallPowerUp();
+        Renderer renderer = null;
 
-        if (powerUp.name.Contains ("PowerUp"))
+        switch (index) 
         {
-            powerUpController = new MultiBallPowerUp();
-        }
-        else if (powerUp.name.Contains("ExpandPlayerPowerUp_Prefab"))
-        {
-             powerUpController = new ExpandPlayerPowerUp();
-        }
-        else
-        {
-            powerUpController = new PowerUpController(); //Default para evitar errores
-        }
+            case 0:
+                powerUpController = new MultiBallPowerUp();
+                powerUpController.GameObject = powerUp;
+                renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlockA = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(materialPropertyBlockA);
+                materialPropertyBlockA.SetColor("_Color", Color.red);
+                renderer.SetPropertyBlock(materialPropertyBlockA);
+                break;
 
-        powerUpController.GameObject = powerUp;
+            case 1:
+                powerUpController = new LongPlayerPowerUp();
+                powerUpController.GameObject = powerUp;
+                renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlockB = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(materialPropertyBlockB);
+                materialPropertyBlockB.SetColor("_Color", Color.blue);
+                renderer.SetPropertyBlock(materialPropertyBlockB);
+                break;
 
+        }
         scriptsBehaviourNoMono.Add(powerUpController);
 
         activePowerUps.Add(powerUpController);
@@ -250,12 +259,49 @@ public class GameManager : CustomUpdateManager //GameManager.powerUpControllers
         levelManager.CreateSphere();
     }
 
-    //Tony
-
-    public void LongPlayerEffect()
+    public void LongPlayerEffect(float SizeMultiplier)
     {
-        levelManager.IncreasePlayer();
+        if (!onPowerUpMode)
+            StartCoroutine(PlayerLong(SizeMultiplier));
     }
 
-    
+    IEnumerator PlayerLong(float SizeMultiplier) 
+    {
+        onPowerUpMode = true;
+        Vector3 initialSize = Player.Size;
+        Vector3 endSize = new Vector3(initialSize.x * SizeMultiplier, initialSize.y, initialSize.z);
+
+        Vector3 initialScale = PlayerRect.transform.localScale;
+        Vector3 endScale = new Vector3(initialScale.x, (endSize.x * initialScale.y) / initialSize.x, initialScale.z);
+
+        float elapsedTime = 0;
+
+        while (elapsedTime < 0.33f)
+        {
+            elapsedTime += Time.deltaTime;
+            Player.Size = Vector3.Lerp(initialSize, endSize, elapsedTime / 0.33f);
+            PlayerRect.transform.localScale = Vector3.Lerp(initialScale, endScale, elapsedTime / 0.33f);
+            yield return null;
+        }
+
+        Player.Size = endSize;
+        PlayerRect.transform.localScale = endScale;
+
+
+        yield return new WaitForSeconds(5f);
+
+        elapsedTime = 0;
+
+        while (elapsedTime < 0.33f)
+        {
+            elapsedTime += Time.deltaTime;
+            Player.Size = Vector3.Lerp(endSize, initialSize, elapsedTime / 0.33f);
+            PlayerRect.transform.localScale = Vector3.Lerp(endScale, initialScale, elapsedTime / 0.33f);
+            yield return null;
+        }
+
+        Player.Size = initialSize;
+        PlayerRect.transform.localScale = initialScale;
+        onPowerUpMode = false;
+    }
 }

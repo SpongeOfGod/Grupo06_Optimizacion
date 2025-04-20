@@ -8,7 +8,6 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
     public void CollideReaction() 
     {
-
         if (Random.value > 0.80 /*&& GameManager.Instance.ballsInGame < 4 && GameManager.Instance.activePowerUps.Count == 0*/)
         {
             GameObject powerup = GameManager.Instance.CreatePowerUp();
