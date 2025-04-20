@@ -12,6 +12,7 @@ public class CustomUpdateManager : MonoBehaviour
         {
             if (scriptsBehaviourNoMono[i] == null || scriptsBehaviourNoMono[i].GameObject == null)
             {
+                scriptsBehaviourNoMono[i] = null;
                 scriptsBehaviourNoMono.RemoveAt(i);
             }
             else 

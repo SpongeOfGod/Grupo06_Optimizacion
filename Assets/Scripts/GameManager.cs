@@ -129,6 +129,7 @@ public class GameManager : CustomUpdateManager
         scriptsBehaviourNoMono.Remove(powerUp);
         activePowerUps.Remove(powerUp);
         Destroy(powerUp.GameObject);
+        powerUp = null;
     }
 
     private void Awake()

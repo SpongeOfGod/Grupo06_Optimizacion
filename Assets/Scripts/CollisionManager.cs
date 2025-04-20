@@ -24,6 +24,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
             if (!controller.GameObject) 
             {
                 GameManager.Instance.SphereControllers.Remove(controller);
+                controller = null;
                 continue;
             }
 

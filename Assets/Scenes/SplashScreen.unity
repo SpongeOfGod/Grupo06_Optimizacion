@@ -158,7 +158,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -242.36}
-  m_SizeDelta: {x: 177, y: 86}
+  m_SizeDelta: {x: 482, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &322044145
 CanvasRenderer:
@@ -181,14 +181,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 340320119, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: 2022682886, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -540,7 +540,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -79.34}
-  m_SizeDelta: {x: 925, y: 97}
+  m_SizeDelta: {x: 931, y: 99}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &873427578
 CanvasRenderer:
@@ -563,14 +563,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1515361393, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: -198734844, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -615,7 +615,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -25}
-  m_SizeDelta: {x: 683, y: 107}
+  m_SizeDelta: {x: 678, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &926490987
 CanvasRenderer:
@@ -638,14 +638,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1416690336, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: 436026825, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -690,7 +690,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -133.68}
-  m_SizeDelta: {x: 532, y: 83}
+  m_SizeDelta: {x: 533, y: 85}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1109800029
 CanvasRenderer:
@@ -713,14 +713,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 530697219, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: 2132514895, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -765,7 +765,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -188.02}
-  m_SizeDelta: {x: 629, y: 80}
+  m_SizeDelta: {x: 628, y: 86}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1395651857
 CanvasRenderer:
@@ -788,14 +788,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2090099920, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: -1348765362, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -840,7 +840,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 177.3, y: -296.7}
-  m_SizeDelta: {x: 1171, y: 103}
+  m_SizeDelta: {x: 1175, y: 94}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1414807915
 CanvasRenderer:
@@ -863,14 +863,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 2143207482, guid: 6fe33ce8851adba4a87a36bd8dcf5cff, type: 3}
+  m_Sprite: {fileID: 1624698273, guid: 6a8bfb695faec8e4dbf8ece6a8ef538c, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -968,6 +968,7 @@ MonoBehaviour:
   prefabBall: {fileID: 0}
   bricksPrefab: []
   powerUpControllers: []
+  onPowerUpMode: 0
 --- !u!4 &1813796674
 Transform:
   m_ObjectHideFlags: 0
