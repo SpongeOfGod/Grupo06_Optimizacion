@@ -1,10 +1,13 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Image = UnityEngine.UI.Image;
 
-public class GameManager : CustomUpdateManager
+public class GameManager : CustomUpdateManager //GameManager.powerUpControllers
 {
     public static GameManager Instance;
 
@@ -84,11 +87,24 @@ public class GameManager : CustomUpdateManager
 
     public GameObject CreatePowerUp() 
     {
-        int index = Random.Range(0, powerUpControllers.Length - 1);
+        int index = Random.Range(0, powerUpControllers.Length /*- 1*/);
 
         GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
 
-        PowerUpController powerUpController = new MultiBallPowerUp();
+        PowerUpController powerUpController; //= new MultiBallPowerUp();
+
+        if (powerUp.name.Contains ("PowerUp"))
+        {
+            powerUpController = new MultiBallPowerUp();
+        }
+        else if (powerUp.name.Contains("ExpandPlayerPowerUp_Prefab"))
+        {
+             powerUpController = new ExpandPlayerPowerUp();
+        }
+        else
+        {
+            powerUpController = new PowerUpController(); //Default para evitar errores
+        }
 
         powerUpController.GameObject = powerUp;
 
@@ -233,4 +249,13 @@ public class GameManager : CustomUpdateManager
         levelManager.CreateSphere();
         levelManager.CreateSphere();
     }
+
+    //Tony
+
+    public void LongPlayerEffect()
+    {
+        levelManager.IncreasePlayer();
+    }
+
+    
 }

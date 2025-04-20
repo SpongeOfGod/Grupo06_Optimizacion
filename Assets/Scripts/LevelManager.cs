@@ -123,4 +123,26 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         gManager.ballsInGame++;
         sphereController.InitialLaunch = false;
     }
+
+    //Tony
+
+    public float sizeMultiplier = 3.5f;
+
+    public void IncreasePlayer()
+    {
+        PlayerMovement player = GameManager.Instance.Player;
+
+        player.Size = new Vector3(player.Size.x * sizeMultiplier, player.Size.y, player.Size.z);
+
+        player.GameObject.transform.localScale = new Vector3
+            (
+                player.GameObject.transform.localScale.x * sizeMultiplier,
+                player.GameObject.transform.localScale.y,
+                player.GameObject.transform.localScale.z
+            );
+
+        
+    }
 }
+
+//playersquare
