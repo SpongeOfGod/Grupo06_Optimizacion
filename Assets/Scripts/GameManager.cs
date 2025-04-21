@@ -154,6 +154,8 @@ public class GameManager : CustomUpdateManager
 
         activePowerUps.Add(powerUpController);
 
+        powerUpController.GameObject.SetActive(false);
+
         return powerUpController;
     }
 

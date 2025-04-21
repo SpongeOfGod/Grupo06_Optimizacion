@@ -9,8 +9,11 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
     public void CollideReaction() 
     {
-        if (powerUp != null)
+        if (powerUp != null) 
+        {
+            powerUp.GameObject.SetActive(true);
             powerUp.speedScale = 5f;
+        }
 
         GameManager.Instance.IncreaseScore(50);
 
