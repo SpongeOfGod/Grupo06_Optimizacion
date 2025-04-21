@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PowerUpController : ManagedUpdateBehaviourNoMono
 {
-    float speedScale = 5f;
+    public float speedScale = 0;
     public Vector3 size = Vector3.one;
     public override void UpdateMe()
     {
@@ -15,6 +15,6 @@ public class PowerUpController : ManagedUpdateBehaviourNoMono
 
     public virtual void PowerUpEffect() 
     {
-    
+        GameManager.Instance.IncreaseScore(100);
     }
 }

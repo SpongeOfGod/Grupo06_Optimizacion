@@ -6,6 +6,7 @@ public class MultiBallPowerUp : PowerUpController
 {
     public override void PowerUpEffect()
     {
+        base.PowerUpEffect();
         GameManager.Instance.MultipleBallEffect();
     }
 }

@@ -5,15 +5,16 @@ using UnityEngine;
 public class BrickController : ManagedUpdateBehaviourNoMono
 {
     public Vector3 Size = Vector3.one;
+    public PowerUpController powerUp;
 
     public void CollideReaction() 
     {
-        if (Random.value > 0.80 /*&& GameManager.Instance.ballsInGame < 4 && GameManager.Instance.activePowerUps.Count == 0*/)
-        {
-            GameObject powerup = GameManager.Instance.CreatePowerUp();
+        if (powerUp != null)
+            powerUp.speedScale = 5f;
 
-            powerup.transform.position = gameObject.transform.position;
-        }
+        GameManager.Instance.IncreaseScore(50);
+
+        powerUp = null;
         gameObject.SetActive(false);
     }
 }

@@ -4,6 +4,7 @@ using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
+using TMPro;
 
 public class GameManager : CustomUpdateManager
 {
@@ -24,8 +25,14 @@ public class GameManager : CustomUpdateManager
     string sceneName;
     List<SphereController> sphereControllers = new List<SphereController>();
     public List<SphereController> SphereControllers { get => sphereControllers; }
+    public TextMeshProUGUI ScoreCount;
+    public TextMeshProUGUI LevelCount;
+    public GameObject lifeManager;
 
     bool initialized;
+    int score = 0;
+    int level = 1;
+    int playerLifes = 3;
 
     [Header("SplashScreen")]
     [SerializeField] List<Image> texts;
@@ -85,7 +92,31 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
-    public GameObject CreatePowerUp() 
+    public void IncreaseScore(int amount) 
+    {
+        score += amount;
+        ScoreCount.text = score.ToString();
+    }
+
+    public void IncreaseLevel() 
+    {
+        level++;
+        LevelCount.text = level.ToString();
+    }
+
+    public void PlayerLifesChanges() 
+    {
+        if (playerLifes - 1 >= 0) 
+        {
+            lifeManager.transform.GetChild(playerLifes - 1).gameObject.SetActive(false);
+            playerLifes--;
+        }
+
+        if (playerLifes <= 0)
+            SceneManager.LoadScene("Gameplay");
+    }
+
+    public PowerUpController CreatePowerUp(Vector3 position) 
     {
         int index = Random.Range(0, powerUpControllers.Count);
 
@@ -117,11 +148,13 @@ public class GameManager : CustomUpdateManager
                 break;
 
         }
+
+        powerUpController.GameObject.transform.position = position;
         scriptsBehaviourNoMono.Add(powerUpController);
 
         activePowerUps.Add(powerUpController);
 
-        return powerUpController.GameObject;
+        return powerUpController;
     }
 
     public void DestroyPowerUp(PowerUpController powerUp) 

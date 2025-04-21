@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelManager : ManagedUpdateBehaviourNoMono
@@ -11,6 +12,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     public List<BrickController> Bricks = new List<BrickController>();
 
     GameManager gManager;
+
+    int powerUpCount = 0;
 
     public void InitializeLevel()
     {
@@ -25,6 +28,17 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             brick.transform.position = gManager.BrickPositions[i];
             BrickController brickController = new BrickController();
             brickController.GameObject = brick;
+
+            PowerUpController powerUpController = null;
+            if (powerUpCount < 3 && Random.value > 0.70) 
+            {
+                powerUpController = gManager.CreatePowerUp(brickController.GameObject.transform.position);
+                powerUpCount++;
+            }
+
+            if (powerUpController != null)
+                brickController.powerUp = powerUpController;
+
             Renderer renderer = brick.GetComponent<Renderer>();
             gManager.Bricks.Add(brickController);
 
@@ -50,10 +64,24 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         if (!allGameObjectsOff)
         {
+            powerUpCount = 0;
+            GameManager.Instance.IncreaseLevel();
             foreach (var item in gManager.Bricks)
             {
                 numberOfBricks = 0;
                 item.GameObject.SetActive(true);
+
+                PowerUpController powerUpController = null;
+                if (powerUpCount < 3 && Random.value > 0.70) 
+                {
+                    powerUpCount++;
+                    powerUpController = gManager.CreatePowerUp(item.GameObject.transform.position);
+                }
+
+                if (powerUpController != null) 
+                {
+                    item.powerUp = powerUpController;
+                }
             }
         }
     }

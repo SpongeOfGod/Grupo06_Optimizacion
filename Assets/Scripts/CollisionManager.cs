@@ -28,6 +28,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 continue;
             }
 
+            if (!controller.GameObject.activeSelf) continue;
+
             Vector2 pos = controller.GameObject.transform.position;
 
             if (controller.GameObject.transform.position.x - controller.Radius < GameManager.Instance.XScreenThresshold.x)
@@ -106,6 +108,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 bounceOnce = false;
                 controller.InitialLaunch = false;
                 controller.MoveDirection = Vector2.zero;
+                GameManager.Instance.PlayerLifesChanges();
             }
             else if (pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
             {
