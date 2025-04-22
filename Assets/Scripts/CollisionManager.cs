@@ -62,29 +62,43 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                            pos.y - controller.Radius < top;
                 if (hit)
                 {
-                    Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
-                    bool fromLeft = prevPos.x + controller.Radius <= left;
-                    bool fromRight = prevPos.x - controller.Radius >= right;
-                    bool fromBelow = prevPos.y + controller.Radius <= bottom;
-                    bool fromAbove = prevPos.y - controller.Radius >= top;
 
-                    if (!controller.fireBallMode) 
+                    if (controller.CanXplode)
                     {
-                        if (fromLeft || fromRight)
-                        {
-                            controller.MoveDirection.x *= -1;
-                        }
-                        else if (fromAbove || fromBelow)
-                        {
-                            controller.MoveDirection.y *= -1;
-                        }
-                        else
-                        {
-                            controller.MoveDirection.y *= -1;
-                        }
+                        BombPowerUp bombPowerUp = new BombPowerUp();
+
+                        bombPowerUp.Explosion(sphereControllers[i]);
                     }
-                    brick.CollideReaction();
+                        
+                    else
+                    {
+                        Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
+                        bool fromLeft = prevPos.x + controller.Radius <= left;
+                        bool fromRight = prevPos.x - controller.Radius >= right;
+                        bool fromBelow = prevPos.y + controller.Radius <= bottom;
+                        bool fromAbove = prevPos.y - controller.Radius >= top;
+
+                        if (!controller.fireBallMode)
+                        {
+                            if (fromLeft || fromRight)
+                            {
+                                controller.MoveDirection.x *= -1;
+                            }
+                            else if (fromAbove || fromBelow)
+                            {
+                                controller.MoveDirection.y *= -1;
+                            }
+                            else
+                            {
+                                controller.MoveDirection.y *= -1;
+                            }
+                        }
+
+                        brick.CollideReaction();
+                    }
+                
                     break;
+
                 }
             }
             if (controller.player != null)

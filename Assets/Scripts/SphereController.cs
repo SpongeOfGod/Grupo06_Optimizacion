@@ -10,12 +10,15 @@ public class SphereController : ManagedUpdateBehaviourNoMono
     public float Mass = 20;
     public float InitialYOffset = -3.93f;
     public PlayerMovement player;
+    public BombPowerUp bombPowerUp;
     private bool bounceOnce;
+    private bool canXplode = true;
+    public bool CanXplode { get { return canXplode; } set {  canXplode = value; } }
     public Vector2 InitialSpeed;
     public ObjectPool<GameObject> SpherePool;
     public TrailRenderer trailRenderer;
     public bool fireBallMode;
-
+    
     public void LaunchDirection(Vector3 Movedirection)
     {
         InitialSpeed = MoveSpeed;
