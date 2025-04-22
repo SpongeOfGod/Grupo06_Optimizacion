@@ -19,6 +19,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     {
         if (!gManager)
             gManager = GameManager.Instance;
+        GameManager.Instance.levelParent.gameObject.SetActive(false);
 
         for (int i = 0; i < gManager.BrickPositions.Count; i++)
         {
@@ -47,6 +48,10 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
             SetPositionAndColor(brick, gManager.BrickPositions[i]);
         }
+
+        GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
+        GameManager.Instance.levelParent.gameObject.SetActive(true);
+        GameManager.Instance.LevelAppear();
     }
 
     public override void UpdateMe()
@@ -66,6 +71,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         {
             powerUpCount = 0;
             GameManager.Instance.IncreaseLevel();
+            GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
+
             foreach (var item in gManager.Bricks)
             {
                 numberOfBricks = 0;
@@ -83,6 +90,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     item.powerUp = powerUpController;
                 }
             }
+
+            GameManager.Instance.LevelAppear();
         }
     }
 
@@ -131,6 +140,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         GameObject Sphere = gManager.SpherePool.Get();
         bool SphereExisted = false;
         SphereController sphereController = new SphereController();
+        sphereController.trailRenderer = Sphere.GetComponent<TrailRenderer>();
 
         for (int i = 0; i < gManager.SphereControllers.Count; i++)
         {

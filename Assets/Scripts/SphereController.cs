@@ -13,6 +13,8 @@ public class SphereController : ManagedUpdateBehaviourNoMono
     private bool bounceOnce;
     public Vector2 InitialSpeed;
     public ObjectPool<GameObject> SpherePool;
+    public TrailRenderer trailRenderer;
+    public bool fireBallMode;
 
     public void LaunchDirection(Vector3 Movedirection)
     {
@@ -26,6 +28,9 @@ public class SphereController : ManagedUpdateBehaviourNoMono
         if (!InitialLaunch || !gameObject.activeSelf) return;
 
         BallMovement();
+
+        if (!fireBallMode)
+            trailRenderer.Clear();
     }
 
     private void BallMovement()

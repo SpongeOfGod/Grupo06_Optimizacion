@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LongPlayerPowerUp : PowerUpController
+public class ShortPlayerPowerDown : PowerUpController
 {
-    float sizeMultiplier = 2.5f;
+    float sizeMultiplier = 0.5f;
     public override void PowerUpEffect()
     {
         base.PowerUpEffect();

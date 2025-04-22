@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LongPlayerPowerUp : PowerUpController
+public class FireBallPowerUp : PowerUpController
 {
-    float sizeMultiplier = 2.5f;
     public override void PowerUpEffect()
     {
         base.PowerUpEffect();
-        GameManager.Instance.ChangeSizePlayerEffect(sizeMultiplier);
+        GameManager.Instance.EnableFireBall();
     }
 }

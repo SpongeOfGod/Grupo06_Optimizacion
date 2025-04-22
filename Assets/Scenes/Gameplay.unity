@@ -1364,6 +1364,8 @@ MonoBehaviour:
   powerUpControllers:
   - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}
   - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}
+  - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}
+  - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}
   onPowerUpMode: 0
 --- !u!4 &1328385323
 Transform:

@@ -133,7 +133,7 @@ public class GameManager : CustomUpdateManager
                 renderer = powerUpController.GameObject.GetComponent<Renderer>();
                 MaterialPropertyBlock materialPropertyBlockA = new MaterialPropertyBlock();
                 renderer.GetPropertyBlock(materialPropertyBlockA);
-                materialPropertyBlockA.SetColor("_Color", Color.red);
+                materialPropertyBlockA.SetColor("_Color", Color.green);
                 renderer.SetPropertyBlock(materialPropertyBlockA);
                 break;
 
@@ -145,6 +145,26 @@ public class GameManager : CustomUpdateManager
                 renderer.GetPropertyBlock(materialPropertyBlockB);
                 materialPropertyBlockB.SetColor("_Color", Color.blue);
                 renderer.SetPropertyBlock(materialPropertyBlockB);
+                break;
+
+            case 2:
+                powerUpController = new ShortPlayerPowerDown();
+                powerUpController.GameObject = powerUp;
+                renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlockC = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(materialPropertyBlockC);
+                materialPropertyBlockC.SetColor("_Color", Color.red);
+                renderer.SetPropertyBlock(materialPropertyBlockC);
+                break;
+
+            case 3:
+                powerUpController = new ShortPlayerPowerDown();
+                powerUpController.GameObject = powerUp;
+                renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlockD = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(materialPropertyBlockD);
+                materialPropertyBlockD.SetColor("_Color", Color.yellow);
+                renderer.SetPropertyBlock(materialPropertyBlockD);
                 break;
 
         }
@@ -286,7 +306,12 @@ public class GameManager : CustomUpdateManager
             levelManager.CreateSphere();
             levelManager.CreateSphere();
         }
-    #endif
+
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            EnableFireBall();
+        }
+#endif
     }
 
     public void MultipleBallEffect() 
@@ -295,10 +320,45 @@ public class GameManager : CustomUpdateManager
         levelManager.CreateSphere();
     }
 
-    public void LongPlayerEffect(float SizeMultiplier)
+    public void ChangeSizePlayerEffect(float SizeMultiplier)
     {
         if (!onPowerUpMode)
             StartCoroutine(PlayerLong(SizeMultiplier));
+    }
+
+    public void LevelAppear() 
+    {
+        StartCoroutine(LevelLerp());
+    }
+
+    public void EnableFireBall() 
+    {
+        StartCoroutine(FireBallEffect());
+    }
+
+    public IEnumerator LevelLerp() 
+    {
+        float elapsedTime = 0;
+        Vector3 initialPosition = levelParent.transform.position;
+        Vector3 endPosition = Vector3.zero;
+
+        while (elapsedTime < 0.33f) 
+        {
+            elapsedTime += Time.deltaTime;
+            levelParent.transform.position = Vector3.Lerp(initialPosition, endPosition, elapsedTime / 0.33f);
+            yield return null;
+        }
+
+        levelParent.transform.position = endPosition;
+    }
+
+    public IEnumerator FireBallEffect() 
+    {
+        Player.fireBallPad = true;
+
+        yield return new WaitForSeconds(3f);
+
+        Player.fireBallPad = false;
     }
 
     IEnumerator PlayerLong(float SizeMultiplier) 

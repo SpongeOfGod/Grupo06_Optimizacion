@@ -67,17 +67,21 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                     bool fromRight = prevPos.x - controller.Radius >= right;
                     bool fromBelow = prevPos.y + controller.Radius <= bottom;
                     bool fromAbove = prevPos.y - controller.Radius >= top;
-                    if (fromLeft || fromRight)
+
+                    if (!controller.fireBallMode) 
                     {
-                        controller.MoveDirection.x *= -1;
-                    }
-                    else if (fromAbove || fromBelow)
-                    {
-                        controller.MoveDirection.y *= -1;
-                    }
-                    else
-                    {
-                        controller.MoveDirection.y *= -1;
+                        if (fromLeft || fromRight)
+                        {
+                            controller.MoveDirection.x *= -1;
+                        }
+                        else if (fromAbove || fromBelow)
+                        {
+                            controller.MoveDirection.y *= -1;
+                        }
+                        else
+                        {
+                            controller.MoveDirection.y *= -1;
+                        }
                     }
                     brick.CollideReaction();
                     break;
@@ -97,6 +101,12 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                     float offset = (pos.x - playerPos.x) / (playerSize.x / 2f);
                     offset = Mathf.Clamp(offset, -1f, 1f);
                     controller.MoveDirection = new Vector2(offset, 1f).normalized;
+
+                    if (GameManager.Instance.Player.fireBallPad) 
+                    {
+                        controller.fireBallMode = true;
+                        controller.trailRenderer.enabled = true;
+                    }
                 }
                 else if (!hit)
                 {
@@ -108,6 +118,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 bounceOnce = false;
                 controller.InitialLaunch = false;
                 controller.MoveDirection = Vector2.zero;
+                controller.fireBallMode = false;
+                controller.trailRenderer.enabled = false;
                 GameManager.Instance.PlayerLifesChanges();
             }
             else if (pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
@@ -115,6 +127,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 if (controller.GameObject == null || !controller.GameObject.activeSelf) continue;
 
                 controller.GameObject.transform.position = pos;
+                controller.fireBallMode = false;
+                controller.trailRenderer.enabled = false;
                 GameManager.Instance.SpherePool.Release(controller.GameObject);
                 GameManager.Instance.ballsInGame--;
                 continue;
