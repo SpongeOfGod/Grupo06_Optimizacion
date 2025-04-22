@@ -18,6 +18,7 @@ public class GameManager : CustomUpdateManager
     public List<Vector3> BrickPositions = new List<Vector3>();
     public List<BrickController> Bricks = new List<BrickController>();
     public GameObject levelParent;
+    public GameObject powerUpParent;
     public ObjectPool<GameObject> BrickPool;
 
     public ObjectPool<GameObject> SpherePool;
@@ -158,7 +159,7 @@ public class GameManager : CustomUpdateManager
                 break;
 
             case 3:
-                powerUpController = new ShortPlayerPowerDown();
+                powerUpController = new FireBallPowerUp();
                 powerUpController.GameObject = powerUp;
                 renderer = powerUpController.GameObject.GetComponent<Renderer>();
                 MaterialPropertyBlock materialPropertyBlockD = new MaterialPropertyBlock();
@@ -429,7 +430,7 @@ public class GameManager : CustomUpdateManager
         foreach (var ball in SphereControllers)
         {
             if (ball != null)
-                ball.DecreaseSpeed(amount);
+                ball.ResetSpeed();
         }
     }
 

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1349,6 +1349,7 @@ MonoBehaviour:
   - {x: -0.85, y: 1.9, z: 0}
   - {x: 0.3, y: 1.9, z: 0}
   levelParent: {fileID: 1364670820}
+  powerUpParent: {fileID: 1920231225}
   ballsInGame: 0
   ScoreCount: {fileID: 1362393959}
   LevelCount: {fileID: 1857036013}
@@ -2143,6 +2144,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d9a32ba1b595c7f43a6742111e562bce, type: 3}
+--- !u!1 &1920231225
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1920231226}
+  m_Layer: 0
+  m_Name: PowerUpParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1920231226
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920231225}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2038915414
 GameObject:
   m_ObjectHideFlags: 0
@@ -2379,6 +2411,7 @@ SceneRoots:
   - {fileID: 1166793320}
   - {fileID: 2100123107}
   - {fileID: 1364670821}
+  - {fileID: 1920231226}
   - {fileID: 1143154198}
   - {fileID: 1712277591}
   - {fileID: 179233891}

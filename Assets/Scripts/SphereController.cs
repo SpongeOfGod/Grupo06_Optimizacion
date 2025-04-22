@@ -27,6 +27,8 @@ public class SphereController : ManagedUpdateBehaviourNoMono
     {
         if (!InitialLaunch || !gameObject.activeSelf) return;
 
+        if (InitialSpeed == Vector2.zero) InitialSpeed = new Vector2(12, 12);
+
         BallMovement();
 
         if (!fireBallMode)
@@ -44,9 +46,8 @@ public class SphereController : ManagedUpdateBehaviourNoMono
         MoveSpeed.y += increaseAmount;
     }
 
-    public void DecreaseSpeed(float decreaseAmount)
+    public void ResetSpeed()
     {
-        MoveSpeed.x -= decreaseAmount;
-        MoveSpeed.y -= decreaseAmount; 
+        MoveSpeed = InitialSpeed;
     }
 }
