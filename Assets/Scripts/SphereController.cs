@@ -37,4 +37,16 @@ public class SphereController : ManagedUpdateBehaviourNoMono
     {
         gameObject.transform.position += new Vector3(MoveDirection.x * MoveSpeed.x * Time.deltaTime, MoveDirection.y * MoveSpeed.y * Time.deltaTime);
     }
+
+    public void IncreaseSpeed(float increaseAmount)
+    {
+        MoveSpeed.x += increaseAmount;
+        MoveSpeed.y += increaseAmount;
+    }
+
+    public void DecreaseSpeed(float decreaseAmount)
+    {
+        MoveSpeed.x -= decreaseAmount;
+        MoveSpeed.y -= decreaseAmount; 
+    }
 }

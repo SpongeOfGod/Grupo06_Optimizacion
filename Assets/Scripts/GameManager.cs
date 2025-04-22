@@ -167,6 +167,16 @@ public class GameManager : CustomUpdateManager
                 renderer.SetPropertyBlock(materialPropertyBlockD);
                 break;
 
+            case 4:
+                powerUpController = new SpeedPowerUp();
+                powerUpController.GameObject = powerUp;
+                renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlockE = new MaterialPropertyBlock();
+                renderer.GetPropertyBlock(materialPropertyBlockE);
+                materialPropertyBlockE.SetColor("_Color", Color.magenta);
+                renderer.SetPropertyBlock(materialPropertyBlockE);
+                break;
+
         }
 
         powerUpController.GameObject.transform.position = position;
@@ -336,6 +346,11 @@ public class GameManager : CustomUpdateManager
         StartCoroutine(FireBallEffect());
     }
 
+    public void ApplySpeedBoostBuff(float amount, float duration)
+    {
+        StartCoroutine(SpeedBoostBuff(amount, duration));
+    }
+
     public IEnumerator LevelLerp() 
     {
         float elapsedTime = 0;
@@ -400,4 +415,22 @@ public class GameManager : CustomUpdateManager
         PlayerRect.transform.localScale = initialScale;
         onPowerUpMode = false;
     }
+
+    IEnumerator SpeedBoostBuff(float amount, float duration)
+    {
+        foreach (var ball in SphereControllers)
+        {
+            if (ball != null)
+                ball.IncreaseSpeed(amount);
+        }
+
+        yield return new WaitForSeconds(duration);
+
+        foreach (var ball in SphereControllers)
+        {
+            if (ball != null)
+                ball.DecreaseSpeed(amount);
+        }
+    }
+
 }
