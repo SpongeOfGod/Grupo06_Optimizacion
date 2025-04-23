@@ -8,14 +8,24 @@ public class BrickController : ManagedUpdateBehaviourNoMono
     public PowerUpController powerUp;
     public Color brickColor = Color.red;
 
+    public Color PowerUpColor;
+
     public void CollideReaction()
     {
         if (powerUp != null)
         {
             powerUp.GameObject.SetActive(true);
-            powerUp.GameObject.transform.localScale = new Vector3(15, 15, 15);
+            if ((new Vector3(3,3,3)).magnitude < (powerUp.GameObject.transform.localScale).magnitude)
+                powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(3, 3, 3);
+            else
+                powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(1, 1, 1);
             powerUp.GameObject.transform.SetParent(GameManager.Instance.powerUpParent.transform);
             powerUp.speedScale = 5f;
+            Renderer renderer = powerUp.GameObject.GetComponent<Renderer>();
+            MaterialPropertyBlock MaterialPower = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(MaterialPower);
+            MaterialPower.SetColor("_Color", PowerUpColor);
+            renderer.SetPropertyBlock(MaterialPower);
         }
 
         GameManager.Instance.SpawnDestroyParticles(gameObject.transform.position, brickColor);

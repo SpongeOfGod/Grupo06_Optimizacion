@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class LevelManager : ManagedUpdateBehaviourNoMono
 {
@@ -40,8 +41,16 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 powerUpCount++;
             }
 
-            if (powerUpController != null)
+            if (powerUpController != null) 
+            {
                 brickController.powerUp = powerUpController;
+                Renderer rendererPowerUp = powerUpController.GameObject.GetComponent<Renderer>();
+                MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+                rendererPowerUp.GetPropertyBlock(materialPropertyBlock);
+                brickController.PowerUpColor = materialPropertyBlock.GetColor("_Color");
+                materialPropertyBlock.SetColor("_Color", Color.black);
+                rendererPowerUp.SetPropertyBlock(materialPropertyBlock);
+            }
 
             Renderer renderer = brick.GetComponent<Renderer>();
             gManager.Bricks.Add(brickController);
@@ -95,6 +104,12 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 if (powerUpController != null)
                 {
                     item.powerUp = powerUpController;
+                    Renderer renderer = powerUpController.GameObject.GetComponent<Renderer>();
+                    MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
+                    renderer.GetPropertyBlock(materialPropertyBlock);
+                    item.PowerUpColor = materialPropertyBlock.GetColor("_Color");
+                    materialPropertyBlock.SetColor("_Color", Color.black);
+                    renderer.SetPropertyBlock(materialPropertyBlock);
                 }
 
                 SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);

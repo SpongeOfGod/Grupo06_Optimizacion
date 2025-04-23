@@ -16,7 +16,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalScale.y
-      value: 20
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
@@ -41,42 +41,42 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.5
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.5
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_ConstrainProportionsScale
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
@@ -93,10 +93,16 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[1]
       value: 
       objectReference: {fileID: 2100000, guid: 9962ccc75e2115c43bfe559728198737, type: 2}
+    - target: {fileID: -5754084199372789682, guid: 2f2e1cab79e70164d883417c6313b34a,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 6416302070336371891, guid: 067df9112bce2a741ba453a8176b934e,
+        type: 3}
     - target: {fileID: 919132149155446097, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
       propertyPath: m_Name
-      value: ExpandPlayerPowerUp_Prefab
+      value: brick
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 2f2e1cab79e70164d883417c6313b34a,
         type: 3}
