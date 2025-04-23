@@ -255,6 +255,11 @@ public class GameManager : CustomUpdateManager
                 powerUpController.GameObject = powerUp;
                 BallMaterialBlock.SetColor("_Color", Color.magenta);
                 break;
+            case 5:
+                powerUpController = new BombPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.cyan);
+                break;
         }
 
         renderer.SetPropertyBlock(BallMaterialBlock);

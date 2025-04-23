@@ -8,7 +8,7 @@ public class PlayerMovement : ManagedUpdateBehaviourNoMono
     [SerializeField] float speedScale = 10.11f;
     public Vector3 Size = new Vector3(2.19f, 0.2f, 2f);
     public bool fireBallPad;
-
+    public bool canXplode = true;
     private int lastDirection = 0;
 
     public override void UpdateMe()

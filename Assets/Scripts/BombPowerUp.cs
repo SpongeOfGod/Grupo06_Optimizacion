@@ -3,22 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using static Unity.Collections.AllocatorManager;
 using static UnityEditor.PlayerSettings;
 
 public class BombPowerUp : PowerUpController
 {
-    private float radius = 0.02f;
-   
-    Vector2 dir;
-
 
     public override void PowerUpEffect()
     {
-        GameManager.Instance.SphereControllers[1].CanXplode = true;
+        GameManager.Instance.Player.canXplode = true;
     }
-
-    public void Explosion( SphereController sphereController)
+    public void Explosion(SphereController controller, GameManager bricks)
     {
+        Vector2 pos = controller.GameObject.transform.position;
+      
+
         foreach (var brick in GameManager.Instance.Bricks)
         {
             if (!brick.GameObject.activeSelf) continue;
@@ -28,23 +27,21 @@ public class BombPowerUp : PowerUpController
             float right = brickPos.x + brickSize.x / 2;
             float top = brickPos.y + brickSize.y / 2;
             float bottom = brickPos.y - brickSize.y / 2;
-            var hits = sphereController.GameObject.transform.position.x + radius > left &&
-            sphereController.GameObject.transform.position.x - radius < right &&
-                         sphereController.GameObject.transform.position.y + radius > bottom &&
-                          sphereController.GameObject.transform.position.y - radius < top;
-            
+            bool exphit = pos.x + controller.ExpRadius > left &&
+                       pos.x - controller.ExpRadius < right &&
+                       pos.y + controller.ExpRadius > bottom &&
+                       pos.y - controller.ExpRadius < top;
          
-            brick.CollideReaction();
-          
-            
-            sphereController.CanXplode = false;
+            if (exphit)
+            {
+                brick.CollideReaction();
+                
+            }
 
         }
-
-
-
-
-
-
+        
     }
-}
+     
+  }
+    
+

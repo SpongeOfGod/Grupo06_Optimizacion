@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
     private bool bounceOnce;
     List<SphereController> sphereControllers = new List<SphereController>();
     List<PowerUpController> powerUpControllers = new List<PowerUpController>();
+    BombPowerUp bomb;
     public override void UpdateMe()
     {
         SphereCollision();
@@ -47,6 +49,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 controller.MoveDirection.y *= -1;
                 pos.y = GameManager.Instance.YScreenThresshold.x - controller.Radius;
             }
+     
             foreach (var brick in GameManager.Instance.Bricks)
             {
                 if (!brick.GameObject.activeSelf) continue;
@@ -62,12 +65,24 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                            pos.y - controller.Radius < top;
                 if (hit)
                 {
+                    if (controller.BombMode)
+                    {
+                   
+                        bomb = controller.bombPowerUp = new BombPowerUp();
+                        bomb.Explosion(controller, GameManager.Instance);
+
+                        controller.player.canXplode = false;
+                        controller.BombMode = false;
+
+                    }
+
                     Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
                     bool fromLeft = prevPos.x + controller.Radius <= left;
                     bool fromRight = prevPos.x - controller.Radius >= right;
                     bool fromBelow = prevPos.y + controller.Radius <= bottom;
                     bool fromAbove = prevPos.y - controller.Radius >= top;
 
+                  
                     if (!controller.fireBallMode)
                     {
                         if (fromLeft || fromRight)
@@ -83,16 +98,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                             controller.MoveDirection.y *= -1;
                         }
                     }
-
+              
                     brick.CollideReaction();
-
-                    if (controller.CanXplode)
-                    {
-                        //BombPowerUp bombPowerUp = new BombPowerUp();
-
-                        //bombPowerUp.Explosion(sphereControllers[i]);
-                    }
-
                     break;
 
                 }
@@ -117,6 +124,10 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                         controller.fireBallMode = true;
                         controller.trailRenderer.enabled = true;
                     }
+                    if (GameManager.Instance.Player.canXplode)
+                    {
+                        controller.BombMode = true;
+                    }
                 }
                 else if (!hit)
                 {
@@ -129,6 +140,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 controller.InitialLaunch = false;
                 controller.MoveDirection = Vector2.zero;
                 controller.fireBallMode = false;
+                controller.BombMode = false;
                 controller.trailRenderer.enabled = false;
                 GameManager.Instance.PlayerLifesChanges();
             }
@@ -138,6 +150,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
 
                 controller.GameObject.transform.position = pos;
                 controller.fireBallMode = false;
+                controller.BombMode = false;
                 controller.trailRenderer.enabled = false;
                 GameManager.Instance.SpherePool.Release(controller.GameObject);
                 GameManager.Instance.ballsInGame--;
