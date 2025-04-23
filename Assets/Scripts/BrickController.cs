@@ -20,20 +20,6 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
         powerUp = null;
         gameObject.SetActive(false);
-    }  
-    public void ExplodeCollideReaction(bool hits)
-    {
-        if (powerUp != null)
-        {
-            powerUp.GameObject.SetActive(true);
-            powerUp.GameObject.transform.SetParent(GameManager.Instance.powerUpParent.transform);
-            powerUp.speedScale = 5f;
-        }
-
-        GameManager.Instance.IncreaseScore(50);
-
-        powerUp = null;
-        gameObject.SetActive(false);
     }
 }
    

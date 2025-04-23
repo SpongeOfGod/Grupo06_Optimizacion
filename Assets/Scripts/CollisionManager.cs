@@ -62,41 +62,37 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                            pos.y - controller.Radius < top;
                 if (hit)
                 {
+                    Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
+                    bool fromLeft = prevPos.x + controller.Radius <= left;
+                    bool fromRight = prevPos.x - controller.Radius >= right;
+                    bool fromBelow = prevPos.y + controller.Radius <= bottom;
+                    bool fromAbove = prevPos.y - controller.Radius >= top;
+
+                    if (!controller.fireBallMode)
+                    {
+                        if (fromLeft || fromRight)
+                        {
+                            controller.MoveDirection.x *= -1;
+                        }
+                        else if (fromAbove || fromBelow)
+                        {
+                            controller.MoveDirection.y *= -1;
+                        }
+                        else
+                        {
+                            controller.MoveDirection.y *= -1;
+                        }
+                    }
+
+                    brick.CollideReaction();
 
                     if (controller.CanXplode)
                     {
-                        BombPowerUp bombPowerUp = new BombPowerUp();
+                        //BombPowerUp bombPowerUp = new BombPowerUp();
 
-                        bombPowerUp.Explosion(sphereControllers[i]);
+                        //bombPowerUp.Explosion(sphereControllers[i]);
                     }
-                        
-                    else
-                    {
-                        Vector2 prevPos = pos - controller.MoveDirection * controller.MoveSpeed * Time.deltaTime;
-                        bool fromLeft = prevPos.x + controller.Radius <= left;
-                        bool fromRight = prevPos.x - controller.Radius >= right;
-                        bool fromBelow = prevPos.y + controller.Radius <= bottom;
-                        bool fromAbove = prevPos.y - controller.Radius >= top;
 
-                        if (!controller.fireBallMode)
-                        {
-                            if (fromLeft || fromRight)
-                            {
-                                controller.MoveDirection.x *= -1;
-                            }
-                            else if (fromAbove || fromBelow)
-                            {
-                                controller.MoveDirection.y *= -1;
-                            }
-                            else
-                            {
-                                controller.MoveDirection.y *= -1;
-                            }
-                        }
-
-                        brick.CollideReaction();
-                    }
-                
                     break;
 
                 }
@@ -127,7 +123,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                     bounceOnce = false;
                 }
             }
-            if ((pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame == 1) || Input.GetKeyDown(KeyCode.R))
+            if ((pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame == 1))
             {
                 bounceOnce = false;
                 controller.InitialLaunch = false;
