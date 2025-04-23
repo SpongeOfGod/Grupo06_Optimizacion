@@ -19,7 +19,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (!gManager)
             gManager = GameManager.Instance;
 
-        GameManager.Instance.levelParent.gameObject.SetActive(false);
+        if (!GameManager.Instance.levelParent.gameObject)
+            GameManager.Instance.levelParent.gameObject.SetActive(false);
 
         Color[] selectedGradient = gManager.GetRandomGradient();
 
@@ -96,7 +97,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     item.powerUp = powerUpController;
                 }
 
-                SetPositionAndColor(item.GameObject, item.GameObject.transform.position, selectedGradient);
+                SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);
             }
 
             GameManager.Instance.LevelAppear();

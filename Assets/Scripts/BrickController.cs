@@ -13,6 +13,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
         if (powerUp != null)
         {
             powerUp.GameObject.SetActive(true);
+            powerUp.GameObject.transform.localScale = new Vector3(15, 15, 15);
             powerUp.GameObject.transform.SetParent(GameManager.Instance.powerUpParent.transform);
             powerUp.speedScale = 5f;
         }

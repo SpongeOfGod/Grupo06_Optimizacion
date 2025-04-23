@@ -92,7 +92,9 @@ public class GameManager : CustomUpdateManager
         BallMaterialBlock.SetColor("_Color", Color.white);
 
         GenerateBrickGrid();
-        levelManager.InitializeLevel();
+
+        if (SceneManager.GetActiveScene().name == "Gameplay")
+            levelManager.InitializeLevel();
     }
 
     private void OnDestroyPoolObject(GameObject Gobject)
@@ -256,10 +258,10 @@ public class GameManager : CustomUpdateManager
         }
 
         renderer.SetPropertyBlock(BallMaterialBlock);
-        powerUpController.GameObject.transform.position = position;
+        powerUpController.GameObject.transform.position = position - Vector3.forward;
         scriptsBehaviourNoMono.Add(powerUpController);
         activePowerUps.Add(powerUpController);
-        powerUpController.GameObject.SetActive(false);
+        //powerUpController.GameObject.SetActive(false);
 
         return powerUpController;
     }
