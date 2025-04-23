@@ -1,10 +1,10 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using System.Collections;
 using TMPro;
+using System.Collections.Generic;
+using System.Collections;
 
 public class GameManager : CustomUpdateManager
 {
@@ -43,29 +43,88 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject ButtonSelect;
 
     [Header("Prefabs")]
-
     public GameObject PlayerRect;
     public GameObject prefabBall;
     [SerializeField] List<GameObject> bricksPrefab = new List<GameObject>();
+    [SerializeField] GameObject destroyParticles;
 
     [Header("Managers")]
-
     BallManager ballManager;
     CollisionManager collisionManager;
     LevelManager levelManager;
-
     [SerializeField] List<GameObject> powerUpControllers;
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
-
     public MaterialPropertyBlock BallMaterialBlock;
-
+    private MaterialPropertyBlock mpb;
     public bool onPowerUpMode;
 
+    private readonly Color[][] colorGradients = new Color[][]
+    {
+        new Color[] { new Color(0.5f, 0f, 0.5f), new Color(0f, 0f, 1f) },
+        new Color[] { new Color(1f, 0f, 0f), new Color(0.5f, 0f, 1f) },
+        new Color[] { new Color(1f, 1f, 0f), new Color(1f, 0f, 0f) },
+        new Color[] { new Color(0f, 1f, 0f), new Color(0f, 0f, 1f) },
+     new Color[] { new Color(0f, 0.5f, 0.5f), new Color(0f, 1f, 0f) },
+    };
+
+    private Color[] currentGradient;
+
+    private void Awake()
+    {
+        sceneName = SceneManager.GetActiveScene().name;
+        Instance = this;
+
+        Player = new PlayerMovement();
+        Player.GameObject = PlayerRect;
+
+        SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
+
+        ballManager = new BallManager();
+        collisionManager = new CollisionManager();
+        levelManager = new LevelManager();
+
+        ballManager.GameObject = gameObject;
+        collisionManager.GameObject = gameObject;
+        levelManager.GameObject = gameObject;
+
+        BallMaterialBlock = new MaterialPropertyBlock();
+        mpb = new MaterialPropertyBlock();
+        BallMaterialBlock.SetColor("_Color", Color.white);
+
+        GenerateBrickGrid();
+        levelManager.InitializeLevel();
+    }
+
+    private void OnDestroyPoolObject(GameObject Gobject)
+    {
+        Destroy(Gobject);
+    }
+
+    private void OnReturnedToPool(GameObject Gobject)
+    {
+        Gobject.SetActive(false);
+    }
+
+    private void OnTakeFromPool(GameObject Gobject)
+    {
+        if (Gobject != null)
+        {
+            Gobject.SetActive(true);
+        }
+    }
+
+    private GameObject CreatePooledItem()
+    {
+        GameObject ball;
+        ball = Instantiate(prefabBall, transform.position, Quaternion.identity);
+        return ball;
+    }
 
     public void InitializePool()
     {
         BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 50, 50);
     }
+
     private void BrickOnDestroyPoolObject(GameObject Gobject)
     {
         Destroy(Gobject);
@@ -84,30 +143,73 @@ public class GameManager : CustomUpdateManager
         }
     }
 
+    public void GenerateBrickGrid()
+    {
+        BrickPositions.Clear();
+
+        int rows = 4;
+        int columns = 7;
+        float startX = -6.64f;
+        float startY = 3.75f;
+        float xSpacing = 1.14f;
+        float ySpacing = 0.6f;
+
+        for (int row = 0; row < rows; row++)
+        {
+            for (int col = 0; col < columns; col++)
+            {
+                float x = startX + col * xSpacing;
+                float y = startY - row * ySpacing;
+                Vector3 pos = new Vector3(x, y, 0f);
+                BrickPositions.Add(pos);
+            }
+        }
+    }
+
     private GameObject CreateBrickItem()
     {
         int index = Random.Range(0, bricksPrefab.Count);
-
         GameObject brick = Instantiate(bricksPrefab[index], levelParent.transform);
+
+        Color randomColor = new Color(Random.value, Random.value, Random.value);
 
         return brick;
     }
 
-    public void IncreaseScore(int amount) 
+    public void SpawnDestroyParticles(Vector3 position, Color color)
+    {
+        GameObject particles = Instantiate(destroyParticles, position, Quaternion.identity);
+
+        var renderer = particles.GetComponent<ParticleSystemRenderer>();
+        if (renderer != null)
+        {
+            MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+            propertyBlock.SetColor("_Color", color);
+            renderer.SetPropertyBlock(propertyBlock);
+        }
+
+        var system = particles.GetComponent<ParticleSystem>();
+        if (system != null)
+        {
+            system.Play();
+        }
+    }
+
+    public void IncreaseScore(int amount)
     {
         score += amount;
         ScoreCount.text = score.ToString();
     }
 
-    public void IncreaseLevel() 
+    public void IncreaseLevel()
     {
         level++;
         LevelCount.text = level.ToString();
     }
 
-    public void PlayerLifesChanges() 
+    public void PlayerLifesChanges()
     {
-        if (playerLifes - 1 >= 0) 
+        if (playerLifes - 1 >= 0)
         {
             lifeManager.transform.GetChild(playerLifes - 1).gameObject.SetActive(false);
             playerLifes--;
@@ -117,134 +219,57 @@ public class GameManager : CustomUpdateManager
             SceneManager.LoadScene("Gameplay");
     }
 
-    public PowerUpController CreatePowerUp(Vector3 position) 
+    public PowerUpController CreatePowerUp(Vector3 position)
     {
         int index = Random.Range(0, powerUpControllers.Count);
-
         GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
         PowerUpController powerUpController = null;
+        Renderer renderer = powerUp.GetComponent<Renderer>();
 
-        Renderer renderer = null;
-
-        switch (index) 
+        switch (index)
         {
             case 0:
                 powerUpController = new MultiBallPowerUp();
                 powerUpController.GameObject = powerUp;
-                renderer = powerUpController.GameObject.GetComponent<Renderer>();
-                MaterialPropertyBlock materialPropertyBlockA = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(materialPropertyBlockA);
-                materialPropertyBlockA.SetColor("_Color", Color.green);
-                renderer.SetPropertyBlock(materialPropertyBlockA);
+                BallMaterialBlock.SetColor("_Color", Color.green);
                 break;
-
             case 1:
                 powerUpController = new LongPlayerPowerUp();
                 powerUpController.GameObject = powerUp;
-                renderer = powerUpController.GameObject.GetComponent<Renderer>();
-                MaterialPropertyBlock materialPropertyBlockB = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(materialPropertyBlockB);
-                materialPropertyBlockB.SetColor("_Color", Color.blue);
-                renderer.SetPropertyBlock(materialPropertyBlockB);
+                BallMaterialBlock.SetColor("_Color", Color.blue);
                 break;
-
             case 2:
                 powerUpController = new ShortPlayerPowerDown();
                 powerUpController.GameObject = powerUp;
-                renderer = powerUpController.GameObject.GetComponent<Renderer>();
-                MaterialPropertyBlock materialPropertyBlockC = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(materialPropertyBlockC);
-                materialPropertyBlockC.SetColor("_Color", Color.red);
-                renderer.SetPropertyBlock(materialPropertyBlockC);
+                BallMaterialBlock.SetColor("_Color", Color.red);
                 break;
-
             case 3:
                 powerUpController = new FireBallPowerUp();
                 powerUpController.GameObject = powerUp;
-                renderer = powerUpController.GameObject.GetComponent<Renderer>();
-                MaterialPropertyBlock materialPropertyBlockD = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(materialPropertyBlockD);
-                materialPropertyBlockD.SetColor("_Color", Color.yellow);
-                renderer.SetPropertyBlock(materialPropertyBlockD);
+                BallMaterialBlock.SetColor("_Color", Color.yellow);
                 break;
-
             case 4:
                 powerUpController = new SpeedPowerUp();
                 powerUpController.GameObject = powerUp;
-                renderer = powerUpController.GameObject.GetComponent<Renderer>();
-                MaterialPropertyBlock materialPropertyBlockE = new MaterialPropertyBlock();
-                renderer.GetPropertyBlock(materialPropertyBlockE);
-                materialPropertyBlockE.SetColor("_Color", Color.magenta);
-                renderer.SetPropertyBlock(materialPropertyBlockE);
+                BallMaterialBlock.SetColor("_Color", Color.magenta);
                 break;
-
         }
 
+        renderer.SetPropertyBlock(BallMaterialBlock);
         powerUpController.GameObject.transform.position = position;
         scriptsBehaviourNoMono.Add(powerUpController);
-
         activePowerUps.Add(powerUpController);
-
         powerUpController.GameObject.SetActive(false);
 
         return powerUpController;
     }
 
-    public void DestroyPowerUp(PowerUpController powerUp) 
+    public void DestroyPowerUp(PowerUpController powerUp)
     {
         scriptsBehaviourNoMono.Remove(powerUp);
         activePowerUps.Remove(powerUp);
         Destroy(powerUp.GameObject);
         powerUp = null;
-    }
-
-    private void Awake()
-    {
-        sceneName = SceneManager.GetActiveScene().name;
-        Instance = this;
-
-        Player = new PlayerMovement();
-
-        Player.GameObject = PlayerRect;
-
-        SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
-
-        ballManager = new BallManager();
-        collisionManager = new CollisionManager();
-        levelManager = new LevelManager();
-
-        ballManager.GameObject = gameObject;
-        collisionManager.GameObject = gameObject;
-        levelManager.GameObject = gameObject;
-
-        BallMaterialBlock = new MaterialPropertyBlock();
-        BallMaterialBlock.SetColor("_Color", Color.white);
-
-        levelManager.InitializeLevel();
-    }
-
-    private void OnDestroyPoolObject(GameObject Gobject)
-    {
-        Destroy(Gobject);
-    }
-    private void OnReturnedToPool(GameObject Gobject)
-    {
-        Gobject.SetActive(false);
-    }
-    private void OnTakeFromPool(GameObject Gobject)
-    {
-        if (Gobject != null) 
-        {
-            Gobject.SetActive(true);
-        }
-    }
-    private GameObject CreatePooledItem()
-    {
-        GameObject ball;
-
-        ball = Instantiate(prefabBall, transform.position, Quaternion.identity);
-
-        return ball;
     }
 
     public override void Update()
@@ -258,42 +283,15 @@ public class GameManager : CustomUpdateManager
             switch (sceneName)
             {
                 case "SplashScreen":
-                    List<SplashText> list = new List<SplashText>();
-                    foreach (var item in texts)
-                    {
-                        SplashText text = new SplashText();
-                        text.ImageColor = item;
-                        list.Add(text);
-
-                        scriptsBehaviourNoMono.Add(text);
-                    }
-
-                    SplashController splashController = new SplashController();
-                    splashController.splashTexts = list;
-                    splashController.GameObject = gameObject;
-                    scriptsBehaviourNoMono.Add(splashController);
-                    splashController.Initialize();
+                    InitializeSplashScreen();
                     break;
 
                 case "MainMenu":
-                    if (TitleObject != null)
-                    {
-                        TitleAnimation titleAnimation = new TitleAnimation();
-                        titleAnimation.GameObject = TitleObject;
-                        scriptsBehaviourNoMono.Add(titleAnimation);
-
-                        ButtonSelector buttonSelector = new ButtonSelector();
-                        buttonSelector.GameObject = ButtonSelect;
-                        scriptsBehaviourNoMono.Add(buttonSelector);
-                    }
-
+                    InitializeMainMenu();
                     break;
 
                 case "Gameplay":
-                    scriptsBehaviourNoMono.Add(ballManager);
-                    scriptsBehaviourNoMono.Add(collisionManager);
-                    scriptsBehaviourNoMono.Add(levelManager);
-                    scriptsBehaviourNoMono.Add(Player);
+                    InitializeGameplay();
                     break;
             }
         }
@@ -302,16 +300,56 @@ public class GameManager : CustomUpdateManager
         {
             case "MainMenu":
                 break;
-
             case "Gameplay":
                 GameplayUpdate();
                 break;
         }
     }
 
+    private void InitializeSplashScreen()
+    {
+        List<SplashText> list = new List<SplashText>();
+        foreach (var item in texts)
+        {
+            SplashText text = new SplashText { ImageColor = item };
+            list.Add(text);
+            scriptsBehaviourNoMono.Add(text);
+        }
+
+        SplashController splashController = new SplashController
+        {
+            splashTexts = list,
+            GameObject = gameObject
+        };
+        scriptsBehaviourNoMono.Add(splashController);
+        splashController.Initialize();
+    }
+
+    private void InitializeMainMenu()
+    {
+        if (TitleObject != null)
+        {
+            TitleAnimation titleAnimation = new TitleAnimation { GameObject = TitleObject };
+            scriptsBehaviourNoMono.Add(titleAnimation);
+
+            ButtonSelector buttonSelector = new ButtonSelector { GameObject = ButtonSelect };
+            scriptsBehaviourNoMono.Add(buttonSelector);
+        }
+    }
+
+    private void InitializeGameplay()
+    {
+        scriptsBehaviourNoMono.Add(ballManager);
+        scriptsBehaviourNoMono.Add(collisionManager);
+        scriptsBehaviourNoMono.Add(levelManager);
+        scriptsBehaviourNoMono.Add(Player);
+
+        InitializePool();
+    }
+
     private void GameplayUpdate()
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             levelManager.CreateSphere();
@@ -325,7 +363,7 @@ public class GameManager : CustomUpdateManager
 #endif
     }
 
-    public void MultipleBallEffect() 
+    public void MultipleBallEffect()
     {
         levelManager.CreateSphere();
         levelManager.CreateSphere();
@@ -337,12 +375,17 @@ public class GameManager : CustomUpdateManager
             StartCoroutine(PlayerLong(SizeMultiplier));
     }
 
-    public void LevelAppear() 
+    public void LevelAppear()
     {
         StartCoroutine(LevelLerp());
     }
 
-    public void EnableFireBall() 
+    public Color[] GetRandomGradient()
+    {
+        return colorGradients[Random.Range(0, colorGradients.Length)];
+    }
+
+    public void EnableFireBall()
     {
         StartCoroutine(FireBallEffect());
     }
@@ -352,32 +395,32 @@ public class GameManager : CustomUpdateManager
         StartCoroutine(SpeedBoostBuff(amount, duration));
     }
 
-    public IEnumerator LevelLerp() 
+    public IEnumerator LevelLerp()
     {
         float elapsedTime = 0;
+        float lerpDuration = 1.75f;
         Vector3 initialPosition = levelParent.transform.position;
         Vector3 endPosition = Vector3.zero;
 
-        while (elapsedTime < 0.33f) 
+        while (elapsedTime < lerpDuration)
         {
             elapsedTime += Time.deltaTime;
-            levelParent.transform.position = Vector3.Lerp(initialPosition, endPosition, elapsedTime / 0.33f);
+            float lerpFactor = 1 - Mathf.Pow(1 - (elapsedTime / lerpDuration), 3);
+            levelParent.transform.position = Vector3.Lerp(initialPosition, endPosition, lerpFactor);
             yield return null;
         }
 
         levelParent.transform.position = endPosition;
     }
 
-    public IEnumerator FireBallEffect() 
+    public IEnumerator FireBallEffect()
     {
         Player.fireBallPad = true;
-
         yield return new WaitForSeconds(3f);
-
         Player.fireBallPad = false;
     }
 
-    IEnumerator PlayerLong(float SizeMultiplier) 
+    IEnumerator PlayerLong(float SizeMultiplier)
     {
         onPowerUpMode = true;
         Vector3 initialSize = Player.Size;
@@ -398,7 +441,6 @@ public class GameManager : CustomUpdateManager
 
         Player.Size = endSize;
         PlayerRect.transform.localScale = endScale;
-
 
         yield return new WaitForSeconds(5f);
 
@@ -433,5 +475,4 @@ public class GameManager : CustomUpdateManager
                 ball.ResetSpeed();
         }
     }
-
 }

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1319,35 +1319,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   XScreenThresshold: {x: -8.5, y: 2.04}
   YScreenThresshold: {x: 5.6, y: -5.6}
-  BrickPositions:
-  - {x: -6.6, y: 3.75, z: 0}
-  - {x: -5.45, y: 3.75, z: 0}
-  - {x: -4.3, y: 3.75, z: 0}
-  - {x: -3.15, y: 3.75, z: 0}
-  - {x: -2, y: 3.75, z: 0}
-  - {x: -0.85, y: 3.75, z: 0}
-  - {x: 0.3, y: 3.75, z: 0}
-  - {x: -6.6, y: 3.1, z: 0}
-  - {x: -5.45, y: 3.1, z: 0}
-  - {x: -4.3, y: 3.1, z: 0}
-  - {x: -3.15, y: 3.1, z: 0}
-  - {x: -2, y: 3.1, z: 0}
-  - {x: -0.85, y: 3.1, z: 0}
-  - {x: 0.3, y: 3.1, z: 0}
-  - {x: -6.6, y: 2.5, z: 0}
-  - {x: -5.45, y: 2.5, z: 0}
-  - {x: -4.3, y: 2.5, z: 0}
-  - {x: -3.15, y: 2.5, z: 0}
-  - {x: -2, y: 2.5, z: 0}
-  - {x: -0.85, y: 2.5, z: 0}
-  - {x: 0.3, y: 2.5, z: 0}
-  - {x: -6.6, y: 1.9, z: 0}
-  - {x: -5.45, y: 1.9, z: 0}
-  - {x: -4.3, y: 1.9, z: 0}
-  - {x: -3.15, y: 1.9, z: 0}
-  - {x: -2, y: 1.9, z: 0}
-  - {x: -0.85, y: 1.9, z: 0}
-  - {x: 0.3, y: 1.9, z: 0}
+  BrickPositions: []
   levelParent: {fileID: 1364670820}
   powerUpParent: {fileID: 1920231225}
   ballsInGame: 0
@@ -1362,6 +1334,8 @@ MonoBehaviour:
     type: 3}
   bricksPrefab:
   - {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070, type: 3}
+  destroyParticles: {fileID: 3492748741947528737, guid: b7c81db0d77fa3d40970931208baf60c,
+    type: 3}
   powerUpControllers:
   - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}
   - {fileID: 8856654010939755837, guid: 232d5181dfc18f544a67c4a4d297f9bc, type: 3}

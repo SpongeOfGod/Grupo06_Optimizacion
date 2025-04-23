@@ -1,7 +1,5 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelManager : ManagedUpdateBehaviourNoMono
@@ -9,29 +7,33 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     private int numberOfBricks;
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
     private Dictionary<GameObject, Renderer> bricksMaterial = new Dictionary<GameObject, Renderer>();
+    private Dictionary<GameObject, BrickController> brickToController = new Dictionary<GameObject, BrickController>();
+
     public List<BrickController> Bricks = new List<BrickController>();
 
     GameManager gManager;
-
     int powerUpCount = 0;
 
     public void InitializeLevel()
     {
         if (!gManager)
             gManager = GameManager.Instance;
+
         GameManager.Instance.levelParent.gameObject.SetActive(false);
+
+        Color[] selectedGradient = gManager.GetRandomGradient();
 
         for (int i = 0; i < gManager.BrickPositions.Count; i++)
         {
-            MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
             gManager.InitializePool();
             GameObject brick = gManager.BrickPool.Get();
             brick.transform.position = gManager.BrickPositions[i];
+
             BrickController brickController = new BrickController();
             brickController.GameObject = brick;
 
             PowerUpController powerUpController = null;
-            if (powerUpCount < 3 && Random.value > 0.70) 
+            if (powerUpCount < 3 && Random.value > 0.70f)
             {
                 powerUpController = gManager.CreatePowerUp(brickController.GameObject.transform.position);
                 powerUpCount++;
@@ -42,11 +44,14 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
             Renderer renderer = brick.GetComponent<Renderer>();
             gManager.Bricks.Add(brickController);
+            Bricks.Add(brickController);
 
             bricksMaterial.TryAdd(brick, renderer);
+            brickToController.TryAdd(brick, brickController);
+
             numberOfBricks++;
 
-            SetPositionAndColor(brick, gManager.BrickPositions[i]);
+            SetPositionAndColor(brick, gManager.BrickPositions[i], selectedGradient);
         }
 
         GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
@@ -59,16 +64,17 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (gManager.ballsInGame == 0)
             CreateSphere();
 
-        bool allGameObjectsOff = false;
+        bool anyBrickActive = false;
 
         foreach (var item in gManager.Bricks)
         {
             if (item.GameObject.activeSelf)
-                allGameObjectsOff = true;
+                anyBrickActive = true;
         }
 
-        if (!allGameObjectsOff)
+        if (!anyBrickActive)
         {
+            Color[] selectedGradient = gManager.GetRandomGradient();
             powerUpCount = 0;
             GameManager.Instance.IncreaseLevel();
             GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
@@ -79,23 +85,25 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 item.GameObject.SetActive(true);
 
                 PowerUpController powerUpController = null;
-                if (powerUpCount < 3 && Random.value > 0.70) 
+                if (powerUpCount < 3 && Random.value > 0.70f)
                 {
                     powerUpCount++;
                     powerUpController = gManager.CreatePowerUp(item.GameObject.transform.position);
                 }
 
-                if (powerUpController != null) 
+                if (powerUpController != null)
                 {
                     item.powerUp = powerUpController;
                 }
+
+                SetPositionAndColor(item.GameObject, item.GameObject.transform.position, selectedGradient);
             }
 
             GameManager.Instance.LevelAppear();
         }
     }
 
-    private void SetPositionAndColor(GameObject brick, Vector3 position)
+    private void SetPositionAndColor(GameObject brick, Vector3 position, Color[] gradient)
     {
         if (!grid.ContainsKey(position))
         {
@@ -105,33 +113,20 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         bricksMaterial.TryGetValue(brick, out Renderer renderer);
 
-        if (numberOfBricks < 8)
+        float minY = 1.9f;
+        float maxY = 3.75f;
+        float t = Mathf.InverseLerp(minY, maxY, position.y);
+
+        Color interpolatedColor = Color.Lerp(gradient[0], gradient[1], t);
+
+        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+        renderer.GetPropertyBlock(propertyBlock);
+        propertyBlock.SetColor("_Color", interpolatedColor);
+        renderer.SetPropertyBlock(propertyBlock);
+
+        if (brickToController.TryGetValue(brick, out var controller))
         {
-            MaterialPropertyBlock material = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(material);
-            material.SetColor("_Color", Color.red);
-            renderer.SetPropertyBlock(material);
-        }
-        else if (numberOfBricks >= 8 && numberOfBricks < 15)
-        {
-            MaterialPropertyBlock material = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(material);
-            material.SetColor("_Color", Color.blue);
-            renderer.SetPropertyBlock(material);
-        }
-        else if (numberOfBricks >= 15 && numberOfBricks < 22)
-        {
-            MaterialPropertyBlock material = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(material);
-            material.SetColor("_Color", Color.green);
-            renderer.SetPropertyBlock(material);
-        }
-        else if (numberOfBricks >= 22 && numberOfBricks < 29)
-        {
-            MaterialPropertyBlock material = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(material);
-            material.SetColor("_Color", Color.yellow);
-            renderer.SetPropertyBlock(material);
+            controller.brickColor = interpolatedColor;
         }
     }
 
@@ -158,9 +153,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             gManager.SphereControllers.Add(sphereController);
             gManager.scriptsBehaviourNoMono.Add(sphereController);
         }
+
         gManager.ballsInGame++;
         sphereController.InitialLaunch = false;
     }
 }
-
-//playersquare

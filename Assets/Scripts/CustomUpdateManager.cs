@@ -7,17 +7,19 @@ public class CustomUpdateManager : MonoBehaviour
 
     public virtual void Update()
     {
-        for (int i = 0; i < scriptsBehaviourNoMono.Count; i++)
+        for (int i = scriptsBehaviourNoMono.Count - 1; i >= 0; i--)
         {
-            if (scriptsBehaviourNoMono[i] == null || scriptsBehaviourNoMono[i].GameObject == null)
+            var behaviour = scriptsBehaviourNoMono[i];
+
+            if (behaviour == null || behaviour.GameObject == null)
             {
-                scriptsBehaviourNoMono[i] = null;
                 scriptsBehaviourNoMono.RemoveAt(i);
             }
-            else 
+            else
             {
-                scriptsBehaviourNoMono[i].UpdateMe();
+                behaviour.UpdateMe();
             }
         }
     }
 }
+ 

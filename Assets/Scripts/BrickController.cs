@@ -6,6 +6,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 {
     public Vector3 Size = Vector3.one;
     public PowerUpController powerUp;
+    public Color brickColor = Color.red;
 
     public void CollideReaction()
     {
@@ -16,6 +17,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             powerUp.speedScale = 5f;
         }
 
+        GameManager.Instance.SpawnDestroyParticles(gameObject.transform.position, brickColor);
         GameManager.Instance.IncreaseScore(50);
 
         powerUp = null;
