@@ -48,6 +48,7 @@ public class GameManager : CustomUpdateManager
     public GameObject prefabBall;
     [SerializeField] List<GameObject> bricksPrefab = new List<GameObject>();
     [SerializeField] GameObject destroyParticles;
+    [SerializeField] GameObject ballDestroyParticles;
 
     [Header("Managers")]
     BallManager ballManager;
@@ -197,6 +198,21 @@ public class GameManager : CustomUpdateManager
             propertyBlock.SetColor("_Color", color);
             renderer.SetPropertyBlock(propertyBlock);
         }
+
+        var system = particles.GetComponent<ParticleSystem>();
+        if (system != null)
+        {
+            system.Play();
+        }
+    }
+
+    public void SpawnBallDeathParticles(Vector3 position)
+    {
+        Quaternion rotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        GameObject particles = Instantiate(ballDestroyParticles, new Vector3 (position.x, -5.69f, 0), rotation);
+
+        var renderer = particles.GetComponent<ParticleSystemRenderer>();
 
         var system = particles.GetComponent<ParticleSystem>();
         if (system != null)

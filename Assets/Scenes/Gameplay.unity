@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1337,6 +1337,8 @@ MonoBehaviour:
   bricksPrefab:
   - {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070, type: 3}
   destroyParticles: {fileID: 3492748741947528737, guid: b7c81db0d77fa3d40970931208baf60c,
+    type: 3}
+  ballDestroyParticles: {fileID: 2736493501910567608, guid: 6199d0091883f8e44bd19ddff571562e,
     type: 3}
   powerUpControllers:
   - {fileID: 8856654010939755837, guid: dd4ceedaba9a95e44b6d8eaf0bcaf4fc, type: 3}

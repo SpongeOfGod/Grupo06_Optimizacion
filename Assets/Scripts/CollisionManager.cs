@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class CollisionManager : ManagedUpdateBehaviourNoMono
 {
@@ -136,6 +137,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
             }
             if ((pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame == 1))
             {
+                GameManager.Instance.SpawnBallDeathParticles(pos);
                 bounceOnce = false;
                 controller.InitialLaunch = false;
                 controller.MoveDirection = Vector2.zero;

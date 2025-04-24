@@ -14,36 +14,4 @@ public class ScoreMultiplierPowerUp : PowerUpController
 
         GameManager.Instance.ApplyScoreMultiplier(newMultiplier, duration, this);
     }
-
-
-    /* Variables nuevas 
-    
-
-
-
-
-
-
-    // Cambio en el método de sumar score
-
-
-
-
-
-
-    // Switch de Power up
-
-    
-    // Método para iniciar el power up
-
-     
-
-
-
-
-
-    // IEnumerator
-
-    
-    */
 }
