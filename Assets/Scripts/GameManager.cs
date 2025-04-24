@@ -342,7 +342,6 @@ public class GameManager : CustomUpdateManager
                 break;
             case "Gameplay":
                 GameplayUpdate();
-                UpdatePowerUpText(); //idealmente solamente deberia actualizarse cuando haya powerups, sino, deberia limpiarse y quitarse del update
                 break;
         }
     }
@@ -395,6 +394,9 @@ public class GameManager : CustomUpdateManager
     {
         if (Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene("MainMenu");
+
+
+        UpdatePowerUpText();
 
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha0))
@@ -478,9 +480,10 @@ public class GameManager : CustomUpdateManager
 
     private void UpdatePowerUpText()
     {
-        if (currentPowerUps.Count == 0 && powerUpText.text != "")
+        if (currentPowerUps.Count == 0)
         {
-            powerUpText.text = "";
+            if (powerUpText.text != "")
+                powerUpText.text = "";
             return;
         }
 
