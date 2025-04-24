@@ -34,8 +34,16 @@ public class SphereController : ManagedUpdateBehaviourNoMono
 
         BallMovement();
 
-        if (!fireBallMode)
-            trailRenderer.Clear();
+        if (!player.fireBallPad) 
+        {
+            fireBallMode = false;
+            trailRenderer.enabled = false;
+        }
+
+        if (!fireBallMode && trailRenderer.enabled) 
+        {
+            //trailRenderer.Clear();
+        }
     }
 
     private void BallMovement()

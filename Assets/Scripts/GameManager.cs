@@ -59,6 +59,8 @@ public class GameManager : CustomUpdateManager
     public bool onPowerUpMode;
 
     public List<(PowerUpController powerUp, float duration)> currentPowerUps = new List<(PowerUpController, float)>();
+    public bool runningCorrutine;
+    public float scoreMultiplier = 1f;
 
     private readonly Color[][] colorGradients = new Color[][]
     {
@@ -74,7 +76,8 @@ public class GameManager : CustomUpdateManager
         { "LongPlayerPowerUp", "Enorme++" },
         { "ShortPlayerPowerDown", "Diminuto--" },
         { "SpeedPowerUp", "Velocidad++" },
-        { "FireBallPowerUp", "Bola de Fuego" }
+        { "FireBallPowerUp", "Bola de Fuego" },
+        { "ScoreMultiplierPowerUp", "Score X2" }
     };
 
     private void Awake()
@@ -202,12 +205,6 @@ public class GameManager : CustomUpdateManager
         }
     }
 
-    public void IncreaseScore(int amount)
-    {
-        score += amount;
-        ScoreCount.text = score.ToString();
-    }
-
     public void IncreaseLevel()
     {
         level++;
@@ -264,6 +261,12 @@ public class GameManager : CustomUpdateManager
                 powerUpController = new BombPowerUp();
                 powerUpController.GameObject = powerUp;
                 BallMaterialBlock.SetColor("_Color", Color.cyan);
+                break;
+
+            case 6:
+                powerUpController = new ScoreMultiplierPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.white);
                 break;
         }
 
@@ -403,12 +406,23 @@ public class GameManager : CustomUpdateManager
         StartCoroutine(FireBallEffect());
     }
 
+    public void ApplyScoreMultiplier(float amount, float duration, PowerUpController powerUp)
+    {
+        StartCoroutine(ScoreMultiplierBuff(amount, duration, powerUp));
+    }
+    public void IncreaseScore(int amount)
+    {
+        int finalScore = Mathf.RoundToInt(amount * scoreMultiplier);
+        score += finalScore;
+        ScoreCount.text = score.ToString();
+    }
+
     public void ApplySpeedBoostBuff(float amount, float duration)
     {
         StartCoroutine(SpeedBoostBuff(amount, duration));
     }
 
-    public void AddOrRefreshPowerUp(PowerUpController newPowerUp, float newDuration)
+    public bool AddOrRefreshPowerUp(PowerUpController newPowerUp, float newDuration)
     {
         bool replaced = false;
 
@@ -418,14 +432,17 @@ public class GameManager : CustomUpdateManager
             {
                 currentPowerUps[i] = (newPowerUp, newDuration);
                 replaced = true;
-                break;
+                return true;
             }
         }
 
         if (!replaced)
         {
             currentPowerUps.Add((newPowerUp, newDuration));
+            return false;
         }
+
+        return false;
     }
 
     private void UpdatePowerUpText()
@@ -470,21 +487,63 @@ public class GameManager : CustomUpdateManager
         levelParent.transform.position = endPosition;
     }
 
+    IEnumerator ScoreMultiplierBuff(float multiplier, float duration, PowerUpController powerUp)
+    {
+        scoreMultiplier = multiplier;
+
+        Color colorA = Color.red;
+        Color colorB = Color.yellow;
+        float flickerSpeed = 5f;
+
+        float elapsed = 0f;
+
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t = Mathf.PingPong(Time.time * flickerSpeed, 1f);
+            ScoreCount.color = Color.Lerp(colorA, colorB, t);
+
+            for (int i = 0; i < currentPowerUps.Count; i++)
+            {
+                PowerUpController powerUpI = currentPowerUps[i].powerUp;
+
+                if (powerUpI == powerUp)
+                    currentPowerUps[i] = (powerUp, duration - elapsed);
+            }
+
+            yield return null;
+        }
+
+        scoreMultiplier = 1f;
+        ScoreCount.color = Color.white;
+
+        currentPowerUps.RemoveAll(x => x.powerUp == powerUp);
+    }
+
+
     IEnumerator FireBallEffect()
     {
         PowerUpController fireBallPowerUp = new FireBallPowerUp();
-        AddOrRefreshPowerUp(fireBallPowerUp, 3f);
+        bool replaced = AddOrRefreshPowerUp(fireBallPowerUp, 3f);
 
         Player.fireBallPad = true;
         float elapsedTime = 0;
-        while (elapsedTime < 3f)
+        float duration = 3f;
+
+        while (elapsedTime < duration)
         {
+            Player.fireBallPad = true;
+
             elapsedTime += Time.deltaTime;
 
             for (int i = 0; i < currentPowerUps.Count; i++)
             {
-                var powerUp = currentPowerUps[i];
-                currentPowerUps[i] = (powerUp.powerUp, powerUp.duration - Time.deltaTime);
+                PowerUpController powerUpI = currentPowerUps[i].powerUp;
+
+                if(powerUpI == fireBallPowerUp)
+                    currentPowerUps[i] = (fireBallPowerUp, duration - elapsedTime);
             }
 
             yield return null;
@@ -514,9 +573,19 @@ public class GameManager : CustomUpdateManager
         yield return ScaleOverTime(initialSize, enlargedSize, initialScale, enlargedScale, transitionDuration);
 
         float timer = holdDuration;
+
         while (timer > 0f)
         {
             timer -= Time.deltaTime;
+
+            for (int i = 0; i < currentPowerUps.Count; i++)
+            {
+                PowerUpController powerUpI = currentPowerUps[i].powerUp;
+
+                if (powerUp == powerUpI)
+                    currentPowerUps[i] = (powerUp, timer);
+            }
+
             yield return null;
         }
 
@@ -565,7 +634,9 @@ public class GameManager : CustomUpdateManager
             for (int i = 0; i < currentPowerUps.Count; i++)
             {
                 var powerUp = currentPowerUps[i];
-                currentPowerUps[i] = (powerUp.powerUp, powerUp.duration - Time.deltaTime);
+
+                if (powerUp.powerUp == speedBoostPowerUp)
+                    currentPowerUps[i] = (powerUp.powerUp, powerUp.duration - Time.deltaTime);
             }
 
             yield return null;
