@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Collections;
-using static UnityEngine.ParticleSystem;
 
 public class GameManager : CustomUpdateManager
 {
@@ -298,7 +297,7 @@ public class GameManager : CustomUpdateManager
         }
 
         renderer.SetPropertyBlock(BallMaterialBlock);
-        powerUpController.GameObject.transform.position = position - Vector3.forward;
+        powerUpController.GameObject.transform.position = position - new Vector3(0, 0, 0.03f);
         scriptsBehaviourNoMono.Add(powerUpController);
         activePowerUps.Add(powerUpController);
         //powerUpController.GameObject.SetActive(false);
@@ -558,11 +557,11 @@ public class GameManager : CustomUpdateManager
     IEnumerator FireBallEffect()
     {
         PowerUpController fireBallPowerUp = new FireBallPowerUp();
-        bool replaced = AddOrRefreshPowerUp(fireBallPowerUp, 3f);
+        bool replaced = AddOrRefreshPowerUp(fireBallPowerUp, 5f);
 
         Player.fireBallPad = true;
         float elapsedTime = 0;
-        float duration = 3f;
+        float duration = 5f;
 
         while (elapsedTime < duration)
         {
