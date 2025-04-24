@@ -5,7 +5,6 @@ using static UnityEditor.Progress;
 
 public class LevelManager : ManagedUpdateBehaviourNoMono
 {
-    private int numberOfBricks;
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
     private Dictionary<GameObject, Renderer> bricksMaterial = new Dictionary<GameObject, Renderer>();
     private Dictionary<GameObject, BrickController> brickToController = new Dictionary<GameObject, BrickController>();
@@ -59,8 +58,6 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             bricksMaterial.TryAdd(brick, renderer);
             brickToController.TryAdd(brick, brickController);
 
-            numberOfBricks++;
-
             SetPositionAndColor(brick, gManager.BrickPositions[i], selectedGradient);
         }
 
@@ -91,7 +88,6 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
             foreach (var item in gManager.Bricks)
             {
-                numberOfBricks = 0;
                 item.GameObject.SetActive(true);
 
                 PowerUpController powerUpController = null;

@@ -8,6 +8,6 @@ public class LongPlayerPowerUp : PowerUpController
     public override void PowerUpEffect()
     {
         base.PowerUpEffect();
-        GameManager.Instance.ChangeSizePlayerEffect(sizeMultiplier);
+        GameManager.Instance.ChangeSizePlayerEffect(sizeMultiplier, this);
     }
 }

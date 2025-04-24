@@ -28,6 +28,7 @@ public class GameManager : CustomUpdateManager
     public List<SphereController> SphereControllers { get => sphereControllers; }
     public TextMeshProUGUI ScoreCount;
     public TextMeshProUGUI LevelCount;
+    public TextMeshProUGUI powerUpText;
     public GameObject lifeManager;
 
     bool initialized;
@@ -55,8 +56,9 @@ public class GameManager : CustomUpdateManager
     [SerializeField] List<GameObject> powerUpControllers;
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
     public MaterialPropertyBlock BallMaterialBlock;
-    private MaterialPropertyBlock mpb;
     public bool onPowerUpMode;
+
+    public List<(PowerUpController powerUp, float duration)> currentPowerUps = new List<(PowerUpController, float)>();
 
     private readonly Color[][] colorGradients = new Color[][]
     {
@@ -64,10 +66,16 @@ public class GameManager : CustomUpdateManager
         new Color[] { new Color(1f, 0f, 0f), new Color(0.5f, 0f, 1f) },
         new Color[] { new Color(1f, 1f, 0f), new Color(1f, 0f, 0f) },
         new Color[] { new Color(0f, 1f, 0f), new Color(0f, 0f, 1f) },
-     new Color[] { new Color(0f, 0.5f, 0.5f), new Color(0f, 1f, 0f) },
+        new Color[] { new Color(0f, 0.5f, 0.5f), new Color(0f, 1f, 0f) },
     };
 
-    private Color[] currentGradient;
+    private Dictionary<string, string> powerUpNameMap = new Dictionary<string, string>()
+    {
+        { "LongPlayerPowerUp", "Enorme++" },
+        { "ShortPlayerPowerDown", "Diminuto--" },
+        { "SpeedPowerUp", "Velocidad++" },
+        { "FireBallPowerUp", "Bola de Fuego" }
+    };
 
     private void Awake()
     {
@@ -88,7 +96,6 @@ public class GameManager : CustomUpdateManager
         levelManager.GameObject = gameObject;
 
         BallMaterialBlock = new MaterialPropertyBlock();
-        mpb = new MaterialPropertyBlock();
         BallMaterialBlock.SetColor("_Color", Color.white);
 
         GenerateBrickGrid();
@@ -172,8 +179,6 @@ public class GameManager : CustomUpdateManager
     {
         int index = Random.Range(0, bricksPrefab.Count);
         GameObject brick = Instantiate(bricksPrefab[index], levelParent.transform);
-
-        Color randomColor = new Color(Random.value, Random.value, Random.value);
 
         return brick;
     }
@@ -309,6 +314,7 @@ public class GameManager : CustomUpdateManager
                 break;
             case "Gameplay":
                 GameplayUpdate();
+                UpdatePowerUpText(); //idealmente solamente deberia actualizarse cuando haya powerups, sino, deberia limpiarse y quitarse del update
                 break;
         }
     }
@@ -376,10 +382,10 @@ public class GameManager : CustomUpdateManager
         levelManager.CreateSphere();
     }
 
-    public void ChangeSizePlayerEffect(float SizeMultiplier)
+    public void ChangeSizePlayerEffect(float SizeMultiplier, PowerUpController powerUp)
     {
         if (!onPowerUpMode)
-            StartCoroutine(PlayerLong(SizeMultiplier));
+            StartCoroutine(PlayerLong(SizeMultiplier, powerUp));
     }
 
     public void LevelAppear()
@@ -402,6 +408,50 @@ public class GameManager : CustomUpdateManager
         StartCoroutine(SpeedBoostBuff(amount, duration));
     }
 
+    public void AddOrRefreshPowerUp(PowerUpController newPowerUp, float newDuration)
+    {
+        bool replaced = false;
+
+        for (int i = 0; i < currentPowerUps.Count; i++)
+        {
+            if (currentPowerUps[i].powerUp.GetType() == newPowerUp.GetType())
+            {
+                currentPowerUps[i] = (newPowerUp, newDuration);
+                replaced = true;
+                break;
+            }
+        }
+
+        if (!replaced)
+        {
+            currentPowerUps.Add((newPowerUp, newDuration));
+        }
+    }
+
+    private void UpdatePowerUpText()
+    {
+        if (currentPowerUps.Count == 0)
+        {
+            powerUpText.text = "";
+            return;
+        }
+
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+        foreach (var (powerUp, powerUpDuration) in currentPowerUps)
+        {
+            string className = powerUp.GetType().Name;
+
+            string displayName = powerUpNameMap.TryGetValue(className, out string name)
+                ? name
+                : className;
+
+            sb.AppendLine($"<color=white>{displayName} ({powerUpDuration:F1}s)</color>");
+        }
+
+        powerUpText.text = sb.ToString();
+    }
+
     public IEnumerator LevelLerp()
     {
         float elapsedTime = 0;
@@ -420,66 +470,113 @@ public class GameManager : CustomUpdateManager
         levelParent.transform.position = endPosition;
     }
 
-    public IEnumerator FireBallEffect()
+    IEnumerator FireBallEffect()
     {
+        PowerUpController fireBallPowerUp = new FireBallPowerUp();
+        AddOrRefreshPowerUp(fireBallPowerUp, 3f);
+
         Player.fireBallPad = true;
-        yield return new WaitForSeconds(3f);
+        float elapsedTime = 0;
+        while (elapsedTime < 3f)
+        {
+            elapsedTime += Time.deltaTime;
+
+            for (int i = 0; i < currentPowerUps.Count; i++)
+            {
+                var powerUp = currentPowerUps[i];
+                currentPowerUps[i] = (powerUp.powerUp, powerUp.duration - Time.deltaTime);
+            }
+
+            yield return null;
+        }
+
         Player.fireBallPad = false;
+
+        currentPowerUps.RemoveAll(x => x.powerUp == fireBallPowerUp);
     }
 
-    IEnumerator PlayerLong(float SizeMultiplier)
+    IEnumerator PlayerLong(float sizeMultiplier, PowerUpController powerUp)
     {
+        float transitionDuration = 0.33f;
+        float holdDuration = 5f;
+        float totalDuration = transitionDuration * 2 + holdDuration;
+
+        AddOrRefreshPowerUp(powerUp, totalDuration);
+
         onPowerUpMode = true;
+
         Vector3 initialSize = Player.Size;
-        Vector3 endSize = new Vector3(initialSize.x * SizeMultiplier, initialSize.y, initialSize.z);
+        Vector3 enlargedSize = new Vector3(initialSize.x * sizeMultiplier, initialSize.y, initialSize.z);
 
         Vector3 initialScale = PlayerRect.transform.localScale;
-        Vector3 endScale = new Vector3(initialScale.x, (endSize.x * initialScale.y) / initialSize.x, initialScale.z);
+        Vector3 enlargedScale = new Vector3(initialScale.x, (enlargedSize.x * initialScale.y) / initialSize.x, initialScale.z);
 
-        float elapsedTime = 0;
+        yield return ScaleOverTime(initialSize, enlargedSize, initialScale, enlargedScale, transitionDuration);
 
-        while (elapsedTime < 0.33f)
+        float timer = holdDuration;
+        while (timer > 0f)
         {
-            elapsedTime += Time.deltaTime;
-            Player.Size = Vector3.Lerp(initialSize, endSize, elapsedTime / 0.33f);
-            PlayerRect.transform.localScale = Vector3.Lerp(initialScale, endScale, elapsedTime / 0.33f);
+            timer -= Time.deltaTime;
             yield return null;
         }
 
-        Player.Size = endSize;
-        PlayerRect.transform.localScale = endScale;
-
-        yield return new WaitForSeconds(5f);
-
-        elapsedTime = 0;
-
-        while (elapsedTime < 0.33f)
-        {
-            elapsedTime += Time.deltaTime;
-            Player.Size = Vector3.Lerp(endSize, initialSize, elapsedTime / 0.33f);
-            PlayerRect.transform.localScale = Vector3.Lerp(endScale, initialScale, elapsedTime / 0.33f);
-            yield return null;
-        }
+        yield return ScaleOverTime(enlargedSize, initialSize, enlargedScale, initialScale, transitionDuration);
 
         Player.Size = initialSize;
         PlayerRect.transform.localScale = initialScale;
+
         onPowerUpMode = false;
+
+        currentPowerUps.RemoveAll(x => x.powerUp == powerUp);
+    }
+
+    IEnumerator ScaleOverTime(Vector3 fromSize, Vector3 toSize, Vector3 fromScale, Vector3 toScale, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            Player.Size = Vector3.Lerp(fromSize, toSize, t);
+            PlayerRect.transform.localScale = Vector3.Lerp(fromScale, toScale, t);
+            yield return null;
+        }
+
+        Player.Size = toSize;
+        PlayerRect.transform.localScale = toScale;
     }
 
     IEnumerator SpeedBoostBuff(float amount, float duration)
     {
+        PowerUpController speedBoostPowerUp = new SpeedPowerUp();
+        AddOrRefreshPowerUp(speedBoostPowerUp, duration);
+
         foreach (var ball in SphereControllers)
         {
             if (ball != null)
                 ball.IncreaseSpeed(amount);
         }
 
-        yield return new WaitForSeconds(duration);
+        float elapsedTime = 0;
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+
+            for (int i = 0; i < currentPowerUps.Count; i++)
+            {
+                var powerUp = currentPowerUps[i];
+                currentPowerUps[i] = (powerUp.powerUp, powerUp.duration - Time.deltaTime);
+            }
+
+            yield return null;
+        }
 
         foreach (var ball in SphereControllers)
         {
             if (ball != null)
                 ball.ResetSpeed();
         }
+
+        currentPowerUps.RemoveAll(x => x.powerUp == speedBoostPowerUp);
     }
 }
