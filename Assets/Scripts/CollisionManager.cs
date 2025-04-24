@@ -186,7 +186,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                     GameManager.Instance.DestroyPowerUp(controller);
                 }
             }
-            if (pos.y - controller.size.y / 2 < GameManager.Instance.YScreenThresshold.y || Input.GetKeyDown(KeyCode.R))
+            if (pos.y - controller.size.y / 2 < GameManager.Instance.YScreenThresshold.y)
             {
                 GameManager.Instance.DestroyPowerUp(controller);
             }

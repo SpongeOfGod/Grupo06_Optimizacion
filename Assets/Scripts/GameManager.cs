@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Collections;
+using static UnityEngine.ParticleSystem;
 
 public class GameManager : CustomUpdateManager
 {
@@ -30,6 +31,8 @@ public class GameManager : CustomUpdateManager
     public TextMeshProUGUI LevelCount;
     public TextMeshProUGUI powerUpText;
     public GameObject lifeManager;
+    public GameObject particleParent;
+    public ParticlePool particlePool;
 
     bool initialized;
     int score = 0;
@@ -101,6 +104,9 @@ public class GameManager : CustomUpdateManager
 
         BallMaterialBlock = new MaterialPropertyBlock();
         BallMaterialBlock.SetColor("_Color", Color.white);
+
+        particlePool = new ParticlePool();
+        particlePool.InitializePool();
 
         GenerateBrickGrid();
 
@@ -187,10 +193,15 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
-    public void SpawnDestroyParticles(Vector3 position, Color color)
+    public GameObject SpawnDestroyParticles()
     {
-        GameObject particles = Instantiate(destroyParticles, position, Quaternion.identity);
+        GameObject particles = Instantiate(destroyParticles, Vector3.zero, Quaternion.identity, particleParent.transform);
 
+        return particles;
+    }
+
+    public void GiveColorParticle(GameObject particles, Color color)
+    {
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
         if (renderer != null)
         {
@@ -379,8 +390,13 @@ public class GameManager : CustomUpdateManager
         InitializePool();
     }
 
+
+
     private void GameplayUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+            SceneManager.LoadScene("MainMenu");
+
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {

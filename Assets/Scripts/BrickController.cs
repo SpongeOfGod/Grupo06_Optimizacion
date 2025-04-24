@@ -28,7 +28,10 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             renderer.SetPropertyBlock(MaterialPower);
         }
 
-        GameManager.Instance.SpawnDestroyParticles(gameObject.transform.position, brickColor);
+        GameObject Particles = GameManager.Instance.particlePool.GetParticles();
+        Particles.gameObject.transform.position = gameObject.transform.position;
+        GameManager.Instance.GiveColorParticle(Particles, brickColor);
+        Particles.gameObject.SetActive(true);
         GameManager.Instance.IncreaseScore(50);
 
         powerUp = null;
