@@ -76,10 +76,10 @@ public class GameManager : CustomUpdateManager
 
     private Dictionary<string, string> powerUpNameMap = new Dictionary<string, string>()
     {
-        { "LongPlayerPowerUp", "Enorme++" },
-        { "ShortPlayerPowerDown", "Diminuto--" },
-        { "SpeedPowerUp", "Velocidad++" },
-        { "FireBallPowerUp", "Bola de Fuego" },
+        { "LongPlayerPowerUp", "Enlarged++" },
+        { "ShortPlayerPowerDown", "Shrunken--" },
+        { "SpeedPowerUp", "Speed++" },
+        { "FireBallPowerUp", "Fireball" },
         { "ScoreMultiplierPowerUp", "Score X2" }
     };
 
