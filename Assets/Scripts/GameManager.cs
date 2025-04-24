@@ -105,7 +105,6 @@ public class GameManager : CustomUpdateManager
         BallMaterialBlock.SetColor("_Color", Color.white);
 
         particlePool = new ParticlePool();
-        particlePool.InitializePool();
 
         GenerateBrickGrid();
 
@@ -385,6 +384,7 @@ public class GameManager : CustomUpdateManager
         scriptsBehaviourNoMono.Add(collisionManager);
         scriptsBehaviourNoMono.Add(levelManager);
         scriptsBehaviourNoMono.Add(Player);
+        particlePool.InitializePool();
 
         InitializePool();
     }
@@ -478,7 +478,7 @@ public class GameManager : CustomUpdateManager
 
     private void UpdatePowerUpText()
     {
-        if (currentPowerUps.Count == 0)
+        if (currentPowerUps.Count == 0 && powerUpText.text != "")
         {
             powerUpText.text = "";
             return;

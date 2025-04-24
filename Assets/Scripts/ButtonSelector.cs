@@ -25,7 +25,7 @@ public class ButtonSelector : ManagedUpdateBehaviourNoMono
                 if (Input.GetKeyDown(KeyCode.Space))
                     SceneManager.LoadScene("Gameplay");
                 
-                rectTransform.anchoredPosition = new Vector3(260, 0, 0);
+                rectTransform.anchoredPosition = new Vector3(219, 62, 0);
 
                 break;
 
@@ -33,7 +33,7 @@ public class ButtonSelector : ManagedUpdateBehaviourNoMono
                 if (Input.GetKeyDown(KeyCode.Space))
                     Application.Quit();
 
-                rectTransform.anchoredPosition = new Vector3(260, -124, 0);
+                rectTransform.anchoredPosition = new Vector3(219, -62, 0);
                 break;
         }
     }
