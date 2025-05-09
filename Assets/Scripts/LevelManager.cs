@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static UnityEditor.Progress;
@@ -8,11 +7,14 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
     private Dictionary<GameObject, Renderer> bricksMaterial = new Dictionary<GameObject, Renderer>();
     private Dictionary<GameObject, BrickController> brickToController = new Dictionary<GameObject, BrickController>();
+    public List<int> BricksToNotActivate = new List<int>();
 
     public List<BrickController> Bricks = new List<BrickController>();
 
     GameManager gManager;
     int powerUpCount = 0;
+
+    int internalLevel = 0;
 
     public void InitializeLevel()
     {
@@ -24,13 +26,16 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         Color[] selectedGradient = gManager.GetRandomGradient();
 
+        
+        gManager.InitializePool();
+
         for (int i = 0; i < gManager.BrickPositions.Count; i++)
         {
-            gManager.InitializePool();
             GameObject brick = gManager.BrickPool.Get();
             brick.transform.position = gManager.BrickPositions[i];
 
             BrickController brickController = new BrickController();
+            brickController.MyPool = gManager.BrickPool;
             brickController.GameObject = brick;
 
             PowerUpController powerUpController = null;
@@ -73,21 +78,35 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         bool anyBrickActive = false;
 
+        for (int i = gManager.Bricks.Count; i < 0; i--)
+        {
+            if (gManager.Bricks[i].GameObject == null)
+                gManager.Bricks.RemoveAt(i);
+        }
+
+
         foreach (var item in gManager.Bricks)
         {
-            if (item.GameObject.activeSelf)
+            if (item.GameObject != null && item.GameObject.activeSelf)
                 anyBrickActive = true;
         }
 
         if (!anyBrickActive)
         {
+            internalLevel++;
             Color[] selectedGradient = gManager.GetRandomGradient();
             powerUpCount = 0;
             GameManager.Instance.IncreaseLevel();
             GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
 
-            foreach (var item in gManager.Bricks)
+            for (int i = 0; i < gManager.Bricks.Count; i++)
             {
+                var item = gManager.Bricks[i];
+
+                if (LevelCreationLogic(i)) continue;
+
+                item.GameObject = gManager.BrickPool.Get();
+                
                 item.GameObject.SetActive(true);
 
                 PowerUpController powerUpController = null;
@@ -107,12 +126,26 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     materialPropertyBlock.SetColor("_Color", Color.black);
                     renderer.SetPropertyBlock(materialPropertyBlock);
                 }
-
                 SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);
             }
-
             GameManager.Instance.LevelAppear();
         }
+    }
+
+    public bool LevelCreationLogic(int indexToSearch) 
+    {
+        switch (internalLevel)
+        {
+            case 1:
+                BricksToNotActivate = new List<int> { 0, 7, 10, 12, 21, 23, 25, 27};
+
+                if (BricksToNotActivate.Contains(indexToSearch)) {
+                    Debug.Log($"NotActivate {indexToSearch}");
+                    return true;
+                }
+                break;
+        }
+        return false;
     }
 
     private void SetPositionAndColor(GameObject brick, Vector3 position, Color[] gradient)

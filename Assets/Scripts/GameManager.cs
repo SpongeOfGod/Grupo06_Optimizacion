@@ -57,6 +57,8 @@ public class GameManager : CustomUpdateManager
     CollisionManager collisionManager;
     LevelManager levelManager;
     [SerializeField] List<GameObject> powerUpControllers;
+
+    public List<GameObject> BricksPrefab { get => bricksPrefab; }
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
     public MaterialPropertyBlock BallMaterialBlock;
     public bool onPowerUpMode;
@@ -139,7 +141,7 @@ public class GameManager : CustomUpdateManager
 
     public void InitializePool()
     {
-        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 50, 50);
+        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 30, 30);
     }
 
     private void BrickOnDestroyPoolObject(GameObject Gobject)
