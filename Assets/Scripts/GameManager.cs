@@ -45,6 +45,10 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject TitleObject;
     [SerializeField] GameObject ButtonSelect;
 
+    [Header("ParallaxBackground")]
+    public List<GameObject> parallaxPlane = new List<GameObject>();
+    public List<float> parallaxScales = new List<float>();
+
     [Header("Prefabs")]
     public GameObject PlayerRect;
     public GameObject prefabBall;
@@ -112,6 +116,8 @@ public class GameManager : CustomUpdateManager
 
         if (SceneManager.GetActiveScene().name == "Gameplay")
             levelManager.InitializeLevel();
+
+        SetParallax();
     }
 
     private void OnDestroyPoolObject(GameObject Gobject)
@@ -314,6 +320,21 @@ public class GameManager : CustomUpdateManager
         powerUp = null;
     }
 
+    private void SetParallax()
+    {
+        for(int i = 0; i < parallaxPlane.Count; i++)
+        {
+            GameObject plane = parallaxPlane[i];
+            float scale = (i < parallaxScales.Count) ? parallaxScales[i] : 0.5f;
+
+            ParallaxController parallax = new ParallaxController();
+            parallax.GameObject = plane;
+            parallax.InitializeParallax(10f, scale, Player);
+            scriptsBehaviourNoMono.Add(parallax);
+        }
+        
+    }
+
     public override void Update()
     {
         base.Update();
@@ -389,8 +410,6 @@ public class GameManager : CustomUpdateManager
 
         InitializePool();
     }
-
-
 
     private void GameplayUpdate()
     {

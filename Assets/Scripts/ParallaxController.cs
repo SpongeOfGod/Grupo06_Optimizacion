@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class ParallaxController : ManagedUpdateBehaviourNoMono
 {
-
     private Vector3 parallaxPosition;
     private float parallaxInitialPosition;
 
@@ -13,8 +12,6 @@ public class ParallaxController : ManagedUpdateBehaviourNoMono
     private float parallaxScale;
     private Vector3 playerPosition;
     
-
-
     public void InitializeParallax(float length, float scale, PlayerMovement player)
     {
         parallaxInitialPosition = 0;
@@ -22,28 +19,28 @@ public class ParallaxController : ManagedUpdateBehaviourNoMono
         playerPosition = player.GameObject.transform.position;
         parallaxLength = length;
         parallaxScale = scale;
-        
     }
 
     public override void UpdateMe()
     {
-        Vector3 position = playerPosition;
+        if (GameManager.Instance == null || GameManager.Instance.Player == null)
+        return;
+
+        Vector3 position = GameManager.Instance.Player.GameObject.transform.position;
+
         float temp = position.x * (1 -  parallaxScale);
         float distance = position.x * parallaxScale;
 
-        Vector3 newPosition = new Vector3(parallaxInitialPosition + distance, parallaxPosition.y, parallaxPosition.z);
+        Vector3 newPosition = new Vector3(parallaxInitialPosition + distance, gameObject.transform.position.y, gameObject.transform.position.z);
 
         parallaxPosition = newPosition;
 
-        if (temp > parallaxInitialPosition + (parallaxScale / 2))
+        if (temp > parallaxInitialPosition + (parallaxLength / 2))
             parallaxInitialPosition += parallaxScale;
 
-        if(temp <  parallaxInitialPosition - (parallaxScale / 2))
+        if(temp <  parallaxInitialPosition - (parallaxLength / 2))
             parallaxInitialPosition -= parallaxScale;
-
 
         gameObject.transform.position = newPosition;
     }
-
-
 }
