@@ -7,7 +7,6 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
     private Dictionary<GameObject, Renderer> bricksMaterial = new Dictionary<GameObject, Renderer>();
     private Dictionary<GameObject, BrickController> brickToController = new Dictionary<GameObject, BrickController>();
-    public List<int> BricksToNotActivate = new List<int>();
 
     public List<BrickController> Bricks = new List<BrickController>();
 
@@ -78,11 +77,11 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         bool anyBrickActive = false;
 
-        for (int i = gManager.Bricks.Count; i < 0; i--)
-        {
-            if (gManager.Bricks[i].GameObject == null)
-                gManager.Bricks.RemoveAt(i);
-        }
+        //for (int i = gManager.Bricks.Count; i < 0; i--)
+        //{
+        //    if (gManager.Bricks[i].GameObject == null)
+        //        gManager.Bricks.RemoveAt(i);
+        //}
 
 
         foreach (var item in gManager.Bricks)
@@ -99,13 +98,17 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             GameManager.Instance.IncreaseLevel();
             GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
 
-            for (int i = 0; i < gManager.Bricks.Count; i++)
+            for (int i = 0; i < gManager.BrickPositions.Count; i++)
             {
                 var item = gManager.Bricks[i];
+                item.Durability = 1;
 
                 if (LevelCreationLogic(i)) continue;
 
-                item.GameObject = gManager.BrickPool.Get();
+                GameObject brick = gManager.BrickPool.Get();
+                brick.transform.localPosition = gManager.BrickPositions[i];
+
+                item.GameObject = brick;
                 
                 item.GameObject.SetActive(true);
 
@@ -126,7 +129,14 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     materialPropertyBlock.SetColor("_Color", Color.black);
                     renderer.SetPropertyBlock(materialPropertyBlock);
                 }
-                SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);
+
+                Renderer rendererBrick = brick.GetComponent<Renderer>();
+
+                LevelBrickDurability(i, item);
+                bricksMaterial.TryAdd(brick, rendererBrick);
+                brickToController.TryAdd(brick, item);
+
+                SetPositionAndColor(brick, item.GameObject.transform.localPosition, selectedGradient);
             }
             GameManager.Instance.LevelAppear();
         }
@@ -137,7 +147,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         switch (internalLevel)
         {
             case 1:
-                BricksToNotActivate = new List<int> { 0, 7, 10, 12, 21, 23, 25, 27};
+                List<int> BricksToNotActivate = new List<int> { 0, 6, 9, 11, 21, 23, 25, 27 };
 
                 if (BricksToNotActivate.Contains(indexToSearch)) {
                     Debug.Log($"NotActivate {indexToSearch}");
@@ -146,6 +156,21 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 break;
         }
         return false;
+    }
+
+    public void LevelBrickDurability(int indexToSearch, BrickController controller)
+    {
+        switch (internalLevel)
+        {
+            case 1:
+                List<int> BricksToChangeDurability = new List<int> { 1, 2, 3, 4, 5, 7, 13, 14, 20 };
+
+                if (BricksToChangeDurability.Contains(indexToSearch))
+                {
+                    controller.Durability = 2;
+                }
+                break;
+        }
     }
 
     private void SetPositionAndColor(GameObject brick, Vector3 position, Color[] gradient)
@@ -164,10 +189,13 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         Color interpolatedColor = Color.Lerp(gradient[0], gradient[1], t);
 
-        MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
-        renderer.GetPropertyBlock(propertyBlock);
-        propertyBlock.SetColor("_Color", interpolatedColor);
-        renderer.SetPropertyBlock(propertyBlock);
+        if (renderer != null) 
+        {
+            MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+            renderer.GetPropertyBlock(propertyBlock);
+            propertyBlock.SetColor("_Color", interpolatedColor);
+            renderer.SetPropertyBlock(propertyBlock);
+        }
 
         if (brickToController.TryGetValue(brick, out var controller))
         {

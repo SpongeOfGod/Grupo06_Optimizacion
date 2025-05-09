@@ -12,13 +12,13 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
     public Color PowerUpColor;
 
-    public int durability = 1;
+    public int Durability = 1;
 
     public void CollideReaction()
     {
-        durability--;
+        Durability--;
 
-        if (durability > 0) 
+        if (Durability >= 1) 
         {
             VisualEffects(25);
             return;

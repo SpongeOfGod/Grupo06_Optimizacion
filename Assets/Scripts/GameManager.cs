@@ -141,7 +141,7 @@ public class GameManager : CustomUpdateManager
 
     public void InitializePool()
     {
-        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 30, 30);
+        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, false, 28, 28);
     }
 
     private void BrickOnDestroyPoolObject(GameObject Gobject)

@@ -53,7 +53,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
      
             foreach (var brick in GameManager.Instance.Bricks)
             {
-                if (!brick.GameObject.activeSelf) continue;
+                if (brick.GameObject == null || !brick.GameObject.activeSelf) continue;
                 Vector2 brickPos = brick.GameObject.transform.position;
                 Vector2 brickSize = brick.Size;
                 float left = brickPos.x - brickSize.x / 2;

@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class BombPowerUp : PowerUpController
 {
-
     public override void PowerUpEffect()
     {
         GameManager.Instance.Player.canXplode = true;
@@ -10,11 +9,11 @@ public class BombPowerUp : PowerUpController
     public void Explosion(SphereController controller, GameManager bricks)
     {
         Vector2 pos = controller.GameObject.transform.position;
-      
 
-        foreach (var brick in GameManager.Instance.Bricks)
+        for (int i = 0; i < GameManager.Instance.Bricks.Count; i++)
         {
-            if (!brick.GameObject.activeSelf) continue;
+            var brick = GameManager.Instance.Bricks[i];
+            if (brick.GameObject == null || !brick.GameObject.activeSelf) continue;
             Vector2 brickPos = brick.GameObject.transform.position;
             Vector2 brickSize = brick.Size;
             float left = brickPos.x - brickSize.x / 2;
@@ -25,17 +24,11 @@ public class BombPowerUp : PowerUpController
                        pos.x - controller.ExpRadius < right &&
                        pos.y + controller.ExpRadius > bottom &&
                        pos.y - controller.ExpRadius < top;
-         
+
             if (exphit)
             {
                 brick.CollideReaction();
-                
             }
-
         }
-        
     }
-     
-  }
-    
-
+}
