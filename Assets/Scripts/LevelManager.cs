@@ -93,6 +93,11 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (!anyBrickActive)
         {
             internalLevel++;
+
+            if (internalLevel >= 11) 
+            {
+                internalLevel = 1;
+            }
             Color[] selectedGradient = gManager.GetRandomGradient();
             powerUpCount = 0;
             GameManager.Instance.IncreaseLevel();
@@ -106,10 +111,11 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 if (LevelCreationLogic(i)) continue;
 
                 GameObject brick = gManager.BrickPool.Get();
-                brick.transform.localPosition = gManager.BrickPositions[i];
-
                 item.GameObject = brick;
-                
+                LevelBrickDurability(i, item);
+
+                item.GameObject.transform.localPosition = gManager.BrickPositions[i];
+
                 item.GameObject.SetActive(true);
 
                 PowerUpController powerUpController = null;
@@ -130,13 +136,12 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     renderer.SetPropertyBlock(materialPropertyBlock);
                 }
 
-                Renderer rendererBrick = brick.GetComponent<Renderer>();
+                Renderer rendererBrick = item.GameObject.GetComponent<Renderer>();
 
-                LevelBrickDurability(i, item);
-                bricksMaterial.TryAdd(brick, rendererBrick);
-                brickToController.TryAdd(brick, item);
+                bricksMaterial.TryAdd(item.GameObject, rendererBrick);
+                brickToController.TryAdd(item.GameObject, item);
 
-                SetPositionAndColor(brick, item.GameObject.transform.localPosition, selectedGradient);
+                SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);
             }
             GameManager.Instance.LevelAppear();
         }
@@ -144,15 +149,70 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
     public bool LevelCreationLogic(int indexToSearch) 
     {
+        List<int> BricksToNotActivate = null;
         switch (internalLevel)
         {
             case 1:
-                List<int> BricksToNotActivate = new List<int> { 0, 6, 9, 11, 21, 23, 25, 27 };
+                BricksToNotActivate = new List<int> { 0, 6, 9, 11, 21, 23, 25, 27 };
 
-                if (BricksToNotActivate.Contains(indexToSearch)) {
-                    Debug.Log($"NotActivate {indexToSearch}");
+                if (BricksToNotActivate.Contains(indexToSearch))
                     return true;
-                }
+                break;
+
+            case 2:
+                BricksToNotActivate = new List<int> { 0, 2, 4, 6, 22, 24, 26};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 3:
+                BricksToNotActivate = new List<int> { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 4:
+                BricksToNotActivate = new List<int> { 1, 5, 7, 9, 11, 13, 15, 19, 22, 24, 26};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 5:
+                BricksToNotActivate = new List<int> { 1, 4, 5, 6, 8, 12, 15, 19, 21, 22, 23, 26};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 6:
+                BricksToNotActivate = new List<int> { 2, 3, 4, 14, 15, 16, 18, 19, 20 };
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 7:
+                BricksToNotActivate = new List<int> { 8, 10, 12, 15, 17, 19 };
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 9:
+                BricksToNotActivate = new List<int> { 2, 3, 4, 7, 8, 9, 11, 12, 13, 16, 18};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
+                break;
+
+            case 10:
+                BricksToNotActivate = new List<int> { 1, 5, 8, 9, 11, 12, 22, 26};
+
+                if (BricksToNotActivate.Contains(indexToSearch))
+                    return true;
                 break;
         }
         return false;
@@ -160,16 +220,120 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
     public void LevelBrickDurability(int indexToSearch, BrickController controller)
     {
+        List<int> Durability_2 = null;
+        List<int> Durability_3 = null;
+        List<int> Durability_4 = null;
+
         switch (internalLevel)
         {
             case 1:
-                List<int> BricksToChangeDurability = new List<int> { 1, 2, 3, 4, 5, 7, 13, 14, 20 };
+                Durability_2 = new List<int> { 1, 2, 3, 4, 5, 7, 13, 14, 20 };
 
-                if (BricksToChangeDurability.Contains(indexToSearch))
-                {
-                    controller.Durability = 2;
-                }
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
                 break;
+
+            case 2:
+                Durability_2 = new List<int> { 1, 3, 5, 21, 23, 25, 27};
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_3 = new List<int> { 7, 9, 11, 13, 15, 17, 19};
+
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+                break;
+
+            case 3:
+                Durability_4 = new List<int> {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 4:
+                Durability_2 = new List<int> { 0, 2, 3, 4, 6, 10, 17 };
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_4 = new List<int> { 8, 12 };
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 5:
+                Durability_2 = new List<int> { 2, 3, 9, 10, 11, 16, 17, 18, 24, 25};
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_4 = new List<int> { 0, 7, 13, 14, 20, 27};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 6:
+                Durability_2 = new List<int> { 7, 8, 12, 13, 17, 21, 22, 23, 24, 25, 26, 27};
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_4 = new List<int> { 0, 1, 5, 6, 9, 10, 11};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 7:
+                Durability_2 = new List<int> { 14, 16, 18, 20};
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_3 = new List<int> { 0, 2, 4, 6};
+
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+
+                Durability_4 = new List<int> {7, 9, 11, 13, 21, 22, 23, 24, 25, 26, 27};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 8:
+                Durability_2 = new List<int> { 7, 9, 10, 11, 13, 14, 17, 20, 21, 23, 25, 27 };
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_3 = new List<int> {1, 2, 3, 4, 5, 15, 19, 22, 26};
+
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+
+                Durability_4 = new List<int> { 0, 6, 8, 12, 16, 18, 24};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 9:
+                Durability_2 = new List<int> { 0, 1, 5, 6};
+
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+
+                Durability_4 = new List<int> { 10, 14, 15, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27};
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+
+            case 10:
+                Durability_3 = new List<int> { 0, 2, 3, 4, 6, 7, 10, 13 };
+
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+
+                Durability_4 = new List<int> { 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27 };
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                break;
+        }
+    }
+
+    private static void ChangeDurability(int indexToSearch, BrickController controller, List<int> DurabilityList, int newDurability, int brickvariation)
+    {
+        if (DurabilityList.Contains(indexToSearch))
+        {
+            controller.Durability = newDurability;
+            controller.GameObject = GameManager.Instance.CreateBrickVariation(controller, brickvariation);
         }
     }
 

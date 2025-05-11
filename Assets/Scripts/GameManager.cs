@@ -32,6 +32,7 @@ public class GameManager : CustomUpdateManager
     public GameObject lifeManager;
     public GameObject particleParent;
     public ParticlePool particlePool;
+    public List<GameObject> brickVariations = new List<GameObject>();
 
     bool initialized;
     int score = 0;
@@ -195,6 +196,19 @@ public class GameManager : CustomUpdateManager
     {
         int index = Random.Range(0, bricksPrefab.Count);
         GameObject brick = Instantiate(bricksPrefab[index], levelParent.transform);
+
+        return brick;
+    }
+
+    public GameObject CreateBrickVariation(BrickController controller, int index) 
+    {
+        GameObject brick = Instantiate(brickVariations[index], controller.GameObject.transform.position, controller.GameObject.transform.rotation, levelParent.transform);
+
+        GameObject previousBrick = controller.GameObject;
+
+        controller.GameObject = brick;
+
+        Destroy(previousBrick);
 
         return brick;
     }

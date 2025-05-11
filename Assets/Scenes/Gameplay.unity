@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.3069224, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1381,6 +1381,11 @@ MonoBehaviour:
   powerUpText: {fileID: 1714390560}
   lifeManager: {fileID: 179233890}
   particleParent: {fileID: 1870225308}
+  brickVariations:
+  - {fileID: 3491587750236115902, guid: 5d2806f9515a4304fa9dc7c8eb316070, type: 3}
+  - {fileID: 3491587750236115902, guid: e952b1aa5f5667a4c8aef028b21bbcc9, type: 3}
+  - {fileID: 3491587750236115902, guid: e7e92c8664b75704480be06be2f0211b, type: 3}
+  - {fileID: 3491587750236115902, guid: af365e180d5711843a365775db129d40, type: 3}
   texts: []
   TitleObject: {fileID: 0}
   ButtonSelect: {fileID: 0}
