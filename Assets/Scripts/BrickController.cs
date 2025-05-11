@@ -13,6 +13,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
     public Color PowerUpColor;
 
     public int Durability = 1;
+    public MaterialPropertyBlock MaterialPropertyBlock;
 
     public void CollideReaction()
     {
@@ -43,16 +44,29 @@ public class BrickController : ManagedUpdateBehaviourNoMono
         VisualEffects(50);
 
         powerUp = null;
-        MyPool.Release(gameObject);
+
+        if (gameObject != null)
+            MyPool.Release(gameObject);
     }
 
     private void VisualEffects(int value)
     {
-        GameObject Particles = GameManager.Instance.particlePool.GetParticles();
-        Particles.gameObject.transform.position = gameObject.transform.position;
-        GameManager.Instance.GiveColorParticle(Particles, brickColor);
-        Particles.gameObject.SetActive(true);
-        GameManager.Instance.IncreaseScore(value);
+        if (gameObject != null) 
+        {
+            GameManager.Instance.LevelManager.BricksMaterial.TryGetValue(gameObject, out Renderer renderer);
+
+            if (renderer != null)
+                renderer.GetPropertyBlock(MaterialPropertyBlock);
+
+            gameObject = GameManager.Instance.CreateBrickVariation(this, Mathf.Clamp(Durability - 1, 0, 10));
+            renderer = gameObject.GetComponent<Renderer>();
+            renderer.SetPropertyBlock(MaterialPropertyBlock);
+            GameObject Particles = GameManager.Instance.particlePool.GetParticles();
+            Particles.gameObject.transform.position = gameObject.transform.position;
+            GameManager.Instance.GiveColorParticle(Particles, brickColor);
+            Particles.gameObject.SetActive(true);
+            GameManager.Instance.IncreaseScore(value);
+        }
     }
 }
    

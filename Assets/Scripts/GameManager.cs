@@ -60,7 +60,7 @@ public class GameManager : CustomUpdateManager
     [Header("Managers")]
     BallManager ballManager;
     CollisionManager collisionManager;
-    LevelManager levelManager;
+    public LevelManager LevelManager;
     [SerializeField] List<GameObject> powerUpControllers;
 
     public List<GameObject> BricksPrefab { get => bricksPrefab; }
@@ -102,11 +102,11 @@ public class GameManager : CustomUpdateManager
 
         ballManager = new BallManager();
         collisionManager = new CollisionManager();
-        levelManager = new LevelManager();
+        LevelManager = new LevelManager();
 
         ballManager.GameObject = gameObject;
         collisionManager.GameObject = gameObject;
-        levelManager.GameObject = gameObject;
+        LevelManager.GameObject = gameObject;
 
         BallMaterialBlock = new MaterialPropertyBlock();
         BallMaterialBlock.SetColor("_Color", Color.white);
@@ -116,7 +116,7 @@ public class GameManager : CustomUpdateManager
         GenerateBrickGrid();
 
         if (SceneManager.GetActiveScene().name == "Gameplay")
-            levelManager.InitializeLevel();
+            LevelManager.InitializeLevel();
 
         SetParallax();
     }
@@ -418,7 +418,7 @@ public class GameManager : CustomUpdateManager
     {
         scriptsBehaviourNoMono.Add(ballManager);
         scriptsBehaviourNoMono.Add(collisionManager);
-        scriptsBehaviourNoMono.Add(levelManager);
+        scriptsBehaviourNoMono.Add(LevelManager);
         scriptsBehaviourNoMono.Add(Player);
         particlePool.InitializePool();
 
@@ -436,8 +436,8 @@ public class GameManager : CustomUpdateManager
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
-            levelManager.CreateSphere();
-            levelManager.CreateSphere();
+            LevelManager.CreateSphere();
+            LevelManager.CreateSphere();
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha9))
@@ -449,8 +449,8 @@ public class GameManager : CustomUpdateManager
 
     public void MultipleBallEffect()
     {
-        levelManager.CreateSphere();
-        levelManager.CreateSphere();
+        LevelManager.CreateSphere();
+        LevelManager.CreateSphere();
     }
 
     public void ChangeSizePlayerEffect(float SizeMultiplier, PowerUpController powerUp)

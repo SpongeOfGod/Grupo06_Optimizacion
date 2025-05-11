@@ -9,6 +9,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     private Dictionary<GameObject, BrickController> brickToController = new Dictionary<GameObject, BrickController>();
 
     public List<BrickController> Bricks = new List<BrickController>();
+    public Dictionary<GameObject, Renderer> BricksMaterial { get => bricksMaterial; }
 
     GameManager gManager;
     int powerUpCount = 0;
@@ -62,7 +63,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             bricksMaterial.TryAdd(brick, renderer);
             brickToController.TryAdd(brick, brickController);
 
-            SetPositionAndColor(brick, gManager.BrickPositions[i], selectedGradient);
+            SetPositionAndColor(brickController, gManager.BrickPositions[i], selectedGradient);
         }
 
         GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
@@ -82,8 +83,34 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         //    if (gManager.Bricks[i].GameObject == null)
         //        gManager.Bricks.RemoveAt(i);
         //}
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Period)) 
+        {
+            internalLevel++;
+            foreach (var brick in Bricks)
+            {
+                while (brick.Durability > 0) 
+                {
+                    brick.CollideReaction();
+                }
+            }
+        }
 
+        if (Input.GetKeyDown(KeyCode.Comma))
+        {
+            internalLevel--;
+            internalLevel--;
 
+            foreach (var brick in Bricks)
+            {
+                while (brick.Durability > 0)
+                {
+                    brick.CollideReaction();
+                }
+            }
+        }
+
+#endif
         foreach (var item in gManager.Bricks)
         {
             if (item.GameObject != null && item.GameObject.activeSelf)
@@ -94,7 +121,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         {
             internalLevel++;
 
-            if (internalLevel >= 11) 
+            if (internalLevel >= 11 || internalLevel <= 0) 
             {
                 internalLevel = 1;
             }
@@ -141,7 +168,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 bricksMaterial.TryAdd(item.GameObject, rendererBrick);
                 brickToController.TryAdd(item.GameObject, item);
 
-                SetPositionAndColor(item.GameObject, item.GameObject.transform.localPosition, selectedGradient);
+                SetPositionAndColor(item, item.GameObject.transform.localPosition, selectedGradient);
             }
             GameManager.Instance.LevelAppear();
         }
@@ -337,15 +364,15 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         }
     }
 
-    private void SetPositionAndColor(GameObject brick, Vector3 position, Color[] gradient)
+    private void SetPositionAndColor(BrickController brick, Vector3 position, Color[] gradient)
     {
         if (!grid.ContainsKey(position))
         {
-            brick.transform.position = position;
-            grid.Add(position, brick);
+            brick.GameObject.transform.position = position;
+            grid.Add(position, brick.GameObject);
         }
 
-        bricksMaterial.TryGetValue(brick, out Renderer renderer);
+        bricksMaterial.TryGetValue(brick.GameObject, out Renderer renderer);
 
         float minY = 1.9f;
         float maxY = 3.75f;
@@ -356,12 +383,13 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (renderer != null) 
         {
             MaterialPropertyBlock propertyBlock = new MaterialPropertyBlock();
+            brick.MaterialPropertyBlock = propertyBlock;
             renderer.GetPropertyBlock(propertyBlock);
             propertyBlock.SetColor("_Color", interpolatedColor);
             renderer.SetPropertyBlock(propertyBlock);
         }
 
-        if (brickToController.TryGetValue(brick, out var controller))
+        if (brickToController.TryGetValue(brick.GameObject, out var controller))
         {
             controller.brickColor = interpolatedColor;
         }
