@@ -1386,6 +1386,11 @@ MonoBehaviour:
   - {fileID: 3491587750236115902, guid: e952b1aa5f5667a4c8aef028b21bbcc9, type: 3}
   - {fileID: 3491587750236115902, guid: e7e92c8664b75704480be06be2f0211b, type: 3}
   - {fileID: 3491587750236115902, guid: af365e180d5711843a365775db129d40, type: 3}
+  assetReferences:
+  - m_AssetGUID: d41ed74013aea244092a1c6a8c10eef4
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   texts: []
   TitleObject: {fileID: 0}
   ButtonSelect: {fileID: 0}

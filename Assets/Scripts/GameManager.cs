@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using TMPro;
 using System.Collections.Generic;
 using System.Collections;
+using System;
+using UnityEngine.AddressableAssets;
+using UnityEngine.ResourceManagement.AsyncOperations;
+using Random = UnityEngine.Random;
 
 public class GameManager : CustomUpdateManager
 {
@@ -33,6 +37,8 @@ public class GameManager : CustomUpdateManager
     public GameObject particleParent;
     public ParticlePool particlePool;
     public List<GameObject> brickVariations = new List<GameObject>();
+    [SerializeField]
+    private List<AssetReference> assetReferences;
 
     bool initialized;
     int score = 0;
@@ -62,6 +68,7 @@ public class GameManager : CustomUpdateManager
     CollisionManager collisionManager;
     public LevelManager LevelManager;
     [SerializeField] List<GameObject> powerUpControllers;
+    public AssetsManager assetsManager;
 
     public List<GameObject> BricksPrefab { get => bricksPrefab; }
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
@@ -97,6 +104,9 @@ public class GameManager : CustomUpdateManager
 
         Player = new PlayerMovement();
         Player.GameObject = PlayerRect;
+
+        assetsManager = new AssetsManager();
+        assetsManager.Initialize();
 
         SpherePool = new ObjectPool<GameObject>(CreatePooledItem, OnTakeFromPool, OnReturnedToPool, OnDestroyPoolObject, true, 10, 10);
 
@@ -141,8 +151,8 @@ public class GameManager : CustomUpdateManager
 
     private GameObject CreatePooledItem()
     {
-        GameObject ball;
-        ball = Instantiate(prefabBall, transform.position, Quaternion.identity);
+        GameObject ball = GetInstance("sphere");
+        ball.transform.position = transform.position;
         return ball;
     }
 
@@ -270,70 +280,6 @@ public class GameManager : CustomUpdateManager
             SceneManager.LoadScene("Gameplay");
     }
 
-    public PowerUpController CreatePowerUp(Vector3 position)
-    {
-        int index = Random.Range(0, powerUpControllers.Count);
-        GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
-        PowerUpController powerUpController = null;
-        Renderer renderer = powerUp.GetComponent<Renderer>();
-
-        switch (index)
-        {
-            case 0:
-                powerUpController = new MultiBallPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.green);
-                break;
-            case 1:
-                powerUpController = new LongPlayerPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.blue);
-                break;
-            case 2:
-                powerUpController = new ShortPlayerPowerDown();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.red);
-                break;
-            case 3:
-                powerUpController = new FireBallPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.yellow);
-                break;
-            case 4:
-                powerUpController = new SpeedPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.magenta);
-                break;
-            case 5:
-                powerUpController = new BombPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.cyan);
-                break;
-
-            case 6:
-                powerUpController = new ScoreMultiplierPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.white);
-                break;
-        }
-
-        renderer.SetPropertyBlock(BallMaterialBlock);
-        powerUpController.GameObject.transform.position = position - new Vector3(0, 0, 0.03f);
-        scriptsBehaviourNoMono.Add(powerUpController);
-        activePowerUps.Add(powerUpController);
-        //powerUpController.GameObject.SetActive(false);
-
-        return powerUpController;
-    }
-
-    public void DestroyPowerUp(PowerUpController powerUp)
-    {
-        scriptsBehaviourNoMono.Remove(powerUp);
-        activePowerUps.Remove(powerUp);
-        Destroy(powerUp.GameObject);
-        powerUp = null;
-    }
-
     private void SetParallax()
     {
         for(int i = 0; i < parallaxPlane.Count; i++)
@@ -346,7 +292,6 @@ public class GameManager : CustomUpdateManager
             parallax.InitializeParallax(10f, scale, Player);
             scriptsBehaviourNoMono.Add(parallax);
         }
-        
     }
 
     public override void Update()
@@ -447,18 +392,6 @@ public class GameManager : CustomUpdateManager
 #endif
     }
 
-    public void MultipleBallEffect()
-    {
-        LevelManager.CreateSphere();
-        LevelManager.CreateSphere();
-    }
-
-    public void ChangeSizePlayerEffect(float SizeMultiplier, PowerUpController powerUp)
-    {
-        if (!onPowerUpMode)
-            StartCoroutine(PlayerLong(SizeMultiplier, powerUp));
-    }
-
     public void LevelAppear()
     {
         StartCoroutine(LevelLerp());
@@ -469,11 +402,101 @@ public class GameManager : CustomUpdateManager
         return colorGradients[Random.Range(0, colorGradients.Length)];
     }
 
+    public void LoadAssets()
+    {
+        StartCoroutine(LoadAssetsCoroutine());
+    }
+
+    public GameObject GetInstance(string assetName)
+    {
+        if (assetsManager.loadedAssetsGameObjects.ContainsKey(assetName))
+        {
+            return Instantiate(assetsManager.loadedAssetsGameObjects[assetName]);
+        }
+        UnityEngine.Debug.LogError($"Asset '{assetName}' not found.");
+        return null;
+    }
+
+    #region PowerUps Functions
+
+    public PowerUpController CreatePowerUp(Vector3 position)
+    {
+        int index = Random.Range(0, powerUpControllers.Count);
+        GameObject powerUp = Instantiate(powerUpControllers[index], levelParent.transform);
+        PowerUpController powerUpController = null;
+        Renderer renderer = powerUp.GetComponent<Renderer>();
+
+        switch (index)
+        {
+            case 0:
+                powerUpController = new MultiBallPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.green);
+                break;
+            case 1:
+                powerUpController = new LongPlayerPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.blue);
+                break;
+            case 2:
+                powerUpController = new ShortPlayerPowerDown();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.red);
+                break;
+            case 3:
+                powerUpController = new FireBallPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.yellow);
+                break;
+            case 4:
+                powerUpController = new SpeedPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.magenta);
+                break;
+            case 5:
+                powerUpController = new BombPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.cyan);
+                break;
+
+            case 6:
+                powerUpController = new ScoreMultiplierPowerUp();
+                powerUpController.GameObject = powerUp;
+                BallMaterialBlock.SetColor("_Color", Color.white);
+                break;
+        }
+
+        renderer.SetPropertyBlock(BallMaterialBlock);
+        powerUpController.GameObject.transform.position = position - new Vector3(0, 0, 0.03f);
+        scriptsBehaviourNoMono.Add(powerUpController);
+        activePowerUps.Add(powerUpController);
+        //powerUpController.GameObject.SetActive(false);
+
+        return powerUpController;
+    }
+
+    public void DestroyPowerUp(PowerUpController powerUp)
+    {
+        scriptsBehaviourNoMono.Remove(powerUp);
+        activePowerUps.Remove(powerUp);
+        Destroy(powerUp.GameObject);
+        powerUp = null;
+    }
+    public void MultipleBallEffect()
+    {
+        LevelManager.CreateSphere();
+        LevelManager.CreateSphere();
+    }
+
     public void EnableFireBall()
     {
         StartCoroutine(FireBallEffect());
     }
-
+    public void ChangeSizePlayerEffect(float SizeMultiplier, PowerUpController powerUp)
+    {
+        if (!onPowerUpMode)
+            StartCoroutine(PlayerLong(SizeMultiplier, powerUp));
+    }
     public void ApplyScoreMultiplier(float amount, float duration, PowerUpController powerUp)
     {
         StartCoroutine(ScoreMultiplierBuff(amount, duration, powerUp));
@@ -536,6 +559,32 @@ public class GameManager : CustomUpdateManager
         }
 
         powerUpText.text = sb.ToString();
+    }
+    #endregion
+
+    #region Coroutines
+    private IEnumerator LoadAssetsCoroutine()
+    {
+        int assetsToLoad = assetReferences.Count;
+        int assetsLoaded = 0;
+        foreach (AssetReference assetReference in assetReferences)
+        {
+            AsyncOperationHandle<GameObject> handle =
+            assetReference.LoadAssetAsync<GameObject>();
+
+            yield return handle;
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                String assetName = handle.Result.name.Split(" ")[0];
+                assetsManager.loadedAssetsGameObjects.Add(assetName, handle.Result);
+                assetsLoaded++;
+            }
+        }
+        if (assetsLoaded == assetsToLoad)
+        {
+            assetsManager.ExecuteEvent();
+            assetsManager.assetsLoaded = true;
+        }
     }
 
     public IEnumerator LevelLerp()
@@ -719,4 +768,5 @@ public class GameManager : CustomUpdateManager
 
         currentPowerUps.RemoveAll(x => x.powerUp == speedBoostPowerUp);
     }
+    #endregion
 }

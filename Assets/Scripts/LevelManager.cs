@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.Progress;
-
 public class LevelManager : ManagedUpdateBehaviourNoMono
 {
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
@@ -73,6 +71,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
     public override void UpdateMe()
     {
+        if (!gManager.assetsManager.assetsLoaded) return;
+
         if (gManager.ballsInGame == 0)
             CreateSphere();
 

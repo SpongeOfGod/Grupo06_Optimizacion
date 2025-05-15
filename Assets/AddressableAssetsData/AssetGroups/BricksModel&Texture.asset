@@ -10,25 +10,30 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
-  m_Name: LevelAssets
+  m_Name: BricksModel&Texture
   m_EditorClassIdentifier: 
-  m_GroupName: LevelAssets
+  m_GroupName: BricksModel&Texture
   m_Data:
     m_SerializedData: []
-  m_GUID: f74831032bf248545b29425ae4cd6317
+  m_GUID: 849ba1863fa0563478537706ea6c122e
   m_SerializeEntries:
-  - m_GUID: d41ed74013aea244092a1c6a8c10eef4
-    m_Address: Assets/Prefabs/sphere.prefab
+  - m_GUID: af365e180d5711843a365775db129d40
+    m_Address: Assets/Prefabs/brick3.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 7048c63ab8af2f441b9b3fced8f2cbf7
-    m_Address: Assets/Visual/Textures/Background.png
+  - m_GUID: e7e92c8664b75704480be06be2f0211b
+    m_Address: Assets/Prefabs/brick2.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2d95eb1dc0b59f44c9fc0d2b7df9220a
-    m_Address: Assets/Visual/Textures/Mountains Background.png
+  - m_GUID: e952b1aa5f5667a4c8aef028b21bbcc9
+    m_Address: Assets/Prefabs/brick1.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5d2806f9515a4304fa9dc7c8eb316070
+    m_Address: Assets/Prefabs/brick0.prefab
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -36,5 +41,5 @@ MonoBehaviour:
   m_Settings: {fileID: 11400000, guid: 235663d0e22057f4292d0c9b535ff7a7, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 568bcba1be931ef46801f5f649fc5934, type: 2}
-    - {fileID: 11400000, guid: aa0c1c5fbe704b347901ee5a80ccdacc, type: 2}
+    - {fileID: 11400000, guid: 74938a1328a05ba449f47b20955dbfec, type: 2}
+    - {fileID: 11400000, guid: 3e3eb277524b61748a1b94b006db2346, type: 2}
