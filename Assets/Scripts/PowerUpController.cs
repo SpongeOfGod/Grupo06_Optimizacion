@@ -16,5 +16,7 @@ public class PowerUpController : ManagedUpdateBehaviourNoMono
     public virtual void PowerUpEffect() 
     {
         GameManager.Instance.IncreaseScore(100);
+
+        GameManager.Instance.PlayAudio(GameManager.Instance.PowerUpClip);
     }
 }

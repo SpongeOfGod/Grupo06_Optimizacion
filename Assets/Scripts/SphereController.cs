@@ -7,7 +7,6 @@ public class SphereController : ManagedUpdateBehaviourNoMono
     public Vector2 MoveSpeed = new Vector2(12, 12);
     public bool InitialLaunch;
     public float Radius = 0.25f;
-    public float ExpRadius = 1.5f;
     public float Mass = 20;
     public float InitialYOffset = -3.93f;
     public PlayerMovement player;

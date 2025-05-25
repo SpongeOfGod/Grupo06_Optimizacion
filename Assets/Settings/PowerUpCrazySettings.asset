@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b9cdb23c7af963344919d62c83085673, type: 3}
+  m_Name: PowerUpCrazySettings
+  m_EditorClassIdentifier: 
+  QuantityPerLevel: 20
+  BallsToSpawn: 8
+  duration: 40
+  scoreMultiplier: 8
+  LongMultiplier: 2.5
+  ShortMultiplier: 0.5
+  fireballDuration: 10
+  speedIncreaseAmount: 4
+  SpeedDuration: 5
+  Radius: 6

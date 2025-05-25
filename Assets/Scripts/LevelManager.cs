@@ -37,7 +37,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             brickController.GameObject = brick;
 
             PowerUpController powerUpController = null;
-            if (powerUpCount < 3 && Random.value > 0.70f)
+            if (powerUpCount < gManager.PowerUpSettings.QuantityPerLevel && Random.value > 0.70f)
             {
                 powerUpController = gManager.CreatePowerUp(brickController.GameObject.transform.position);
                 powerUpCount++;
@@ -63,6 +63,9 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
             SetPositionAndColor(brickController, gManager.BrickPositions[i], selectedGradient);
         }
+
+        foreach (var brick in gManager.Bricks)
+            GameManager.Instance.blocksLeft++;
 
         GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
         GameManager.Instance.levelParent.gameObject.SetActive(true);
@@ -111,11 +114,17 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         }
 
 #endif
+
+        var bricksNumber = 0;
         foreach (var item in gManager.Bricks)
         {
-            if (item.GameObject != null && item.GameObject.activeSelf)
+            if (item.GameObject != null && item.GameObject.activeSelf) 
+            {
+                bricksNumber++;
                 anyBrickActive = true;
+            }
         }
+        GameManager.Instance.blocksLeft = bricksNumber;
 
         if (!anyBrickActive)
         {
@@ -146,7 +155,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 item.GameObject.SetActive(true);
 
                 PowerUpController powerUpController = null;
-                if (powerUpCount < 3 && Random.value > 0.70f)
+                if (powerUpCount < gManager.PowerUpSettings.QuantityPerLevel && Random.value > 0.70f)
                 {
                     powerUpCount++;
                     powerUpController = gManager.CreatePowerUp(item.GameObject.transform.position);

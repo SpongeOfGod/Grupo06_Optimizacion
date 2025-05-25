@@ -20,10 +20,10 @@ public class BombPowerUp : PowerUpController
             float right = brickPos.x + brickSize.x / 2;
             float top = brickPos.y + brickSize.y / 2;
             float bottom = brickPos.y - brickSize.y / 2;
-            bool exphit = pos.x + controller.ExpRadius > left &&
-                       pos.x - controller.ExpRadius < right &&
-                       pos.y + controller.ExpRadius > bottom &&
-                       pos.y - controller.ExpRadius < top;
+            bool exphit = pos.x + GameManager.Instance.PowerUpSettings.Radius > left &&
+                       pos.x - GameManager.Instance.PowerUpSettings.Radius < right &&
+                       pos.y + GameManager.Instance.PowerUpSettings.Radius > bottom &&
+                       pos.y - GameManager.Instance.PowerUpSettings.Radius < top;
 
             if (exphit)
             {

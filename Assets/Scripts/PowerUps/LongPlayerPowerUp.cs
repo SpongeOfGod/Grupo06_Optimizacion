@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class LongPlayerPowerUp : PowerUpController
 {
-    float sizeMultiplier = 2.5f;
     public override void PowerUpEffect()
     {
         base.PowerUpEffect();
-        GameManager.Instance.ChangeSizePlayerEffect(sizeMultiplier, this);
+        GameManager.Instance.ChangeSizePlayerEffect(GameManager.Instance.PowerUpSettings.LongMultiplier, this);
     }
 }

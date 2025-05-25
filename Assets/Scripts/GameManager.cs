@@ -15,6 +15,9 @@ public class GameManager : CustomUpdateManager
     public static GameManager Instance;
 
     [Header("Gameplay Properties")]
+    public AudioSource SFXAudiorSource;
+
+    public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
     public Vector2 XScreenThresshold;
     public Vector2 YScreenThresshold;
     public PlayerMovement Player;
@@ -30,9 +33,7 @@ public class GameManager : CustomUpdateManager
     string sceneName;
     List<SphereController> sphereControllers = new List<SphereController>();
     public List<SphereController> SphereControllers { get => sphereControllers; }
-    public TextMeshProUGUI ScoreCount;
-    public TextMeshProUGUI LevelCount;
-    public TextMeshProUGUI powerUpText;
+
     public GameObject lifeManager;
     public GameObject particleParent;
     public ParticlePool particlePool;
@@ -44,6 +45,18 @@ public class GameManager : CustomUpdateManager
     int score = 0;
     int level = 1;
     int playerLifes = 3;
+    public int ballBounce;
+    public int blocksLeft;
+
+    [Header("PowerUp Settings")]
+    public PowerUpSettings PowerUpSettings;
+
+    [Header("UI")]
+    public TextMeshProUGUI ScoreCount;
+    public TextMeshProUGUI LevelCount;
+    public TextMeshProUGUI powerUpText;
+    public TextMeshProUGUI Blocksleft;
+    public TextMeshProUGUI BallBounce;
 
     [Header("SplashScreen")]
     [SerializeField] List<Image> texts;
@@ -136,6 +149,11 @@ public class GameManager : CustomUpdateManager
         Destroy(Gobject);
     }
 
+    public void PlayAudio(AudioClip audioClip) 
+    {
+        SFXAudiorSource.clip = audioClip;
+        SFXAudiorSource.Play();
+    }
     private void OnReturnedToPool(GameObject Gobject)
     {
         Gobject.SetActive(false);
@@ -375,6 +393,8 @@ public class GameManager : CustomUpdateManager
         if (Input.GetKeyDown(KeyCode.Escape))
             SceneManager.LoadScene("MainMenu");
 
+        BallBounce.text = ballBounce.ToString();
+        Blocksleft.text = blocksLeft.ToString();
 
         UpdatePowerUpText();
 
@@ -484,22 +504,24 @@ public class GameManager : CustomUpdateManager
     }
     public void MultipleBallEffect()
     {
-        LevelManager.CreateSphere();
-        LevelManager.CreateSphere();
+        for (int i = 0; i < PowerUpSettings.BallsToSpawn; i++)
+        {
+            LevelManager.CreateSphere();
+        }
     }
 
     public void EnableFireBall()
     {
         StartCoroutine(FireBallEffect());
     }
-    public void ChangeSizePlayerEffect(float SizeMultiplier, PowerUpController powerUp)
+    public void ChangeSizePlayerEffect(float multiplier, PowerUpController powerUp)
     {
         if (!onPowerUpMode)
-            StartCoroutine(PlayerLong(SizeMultiplier, powerUp));
+            StartCoroutine(PlayerLong(multiplier, powerUp));
     }
-    public void ApplyScoreMultiplier(float amount, float duration, PowerUpController powerUp)
+    public void ApplyScoreMultiplier(PowerUpController powerUp)
     {
-        StartCoroutine(ScoreMultiplierBuff(amount, duration, powerUp));
+        StartCoroutine(ScoreMultiplierBuff(PowerUpSettings.scoreMultiplier, PowerUpSettings.duration, powerUp));
     }
     public void IncreaseScore(int amount)
     {
@@ -508,9 +530,9 @@ public class GameManager : CustomUpdateManager
         ScoreCount.text = score.ToString();
     }
 
-    public void ApplySpeedBoostBuff(float amount, float duration)
+    public void ApplySpeedBoostBuff()
     {
-        StartCoroutine(SpeedBoostBuff(amount, duration));
+        StartCoroutine(SpeedBoostBuff(PowerUpSettings.speedIncreaseAmount, PowerUpSettings.SpeedDuration));
     }
 
     public bool AddOrRefreshPowerUp(PowerUpController newPowerUp, float newDuration)
@@ -644,7 +666,7 @@ public class GameManager : CustomUpdateManager
     IEnumerator FireBallEffect()
     {
         PowerUpController fireBallPowerUp = new FireBallPowerUp();
-        bool replaced = AddOrRefreshPowerUp(fireBallPowerUp, 5f);
+        bool replaced = AddOrRefreshPowerUp(fireBallPowerUp, PowerUpSettings.fireballDuration);
 
         Player.fireBallPad = true;
         float elapsedTime = 0;

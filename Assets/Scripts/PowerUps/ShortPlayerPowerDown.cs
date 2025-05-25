@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class ShortPlayerPowerDown : PowerUpController
 {
-    float sizeMultiplier = 0.5f;
     public override void PowerUpEffect()
     {
         base.PowerUpEffect();
-        GameManager.Instance.ChangeSizePlayerEffect(sizeMultiplier, this);
+        GameManager.Instance.ChangeSizePlayerEffect(GameManager.Instance.PowerUpSettings.ShortMultiplier, this);
+        GameManager.Instance.PlayAudio(GameManager.Instance.PowerDownClip);
     }
 }

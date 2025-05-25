@@ -66,11 +66,12 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                            pos.y - controller.Radius < top;
                 if (hit)
                 {
+                    GameManager.Instance.PlayAudio(GameManager.Instance.BallBounceClip);
                     if (controller.BombMode)
                     {
-                   
                         bomb = controller.bombPowerUp = new BombPowerUp();
                         bomb.Explosion(controller, GameManager.Instance);
+                        GameManager.Instance.PlayAudio(GameManager.Instance.ExplosionClip);
 
                         controller.player.canXplode = false;
                         controller.BombMode = false;
@@ -115,6 +116,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                            pos.y + controller.Radius > playerPos.y - playerSize.y / 2;
                 if (hit && !bounceOnce)
                 {
+                    GameManager.Instance.PlayAudio(GameManager.Instance.BallBounceClip);
+                    GameManager.Instance.ballBounce++;
                     bounceOnce = true;
                     float offset = (pos.x - playerPos.x) / (playerSize.x / 2f);
                     offset = Mathf.Clamp(offset, -1f, 1f);
@@ -145,6 +148,7 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
                 controller.BombMode = false;
                 controller.trailRenderer.enabled = false;
                 GameManager.Instance.PlayerLifesChanges();
+                GameManager.Instance.PlayAudio(GameManager.Instance.LoseLifeClip);
             }
             else if (pos.y - controller.Radius < GameManager.Instance.YScreenThresshold.y && GameManager.Instance.ballsInGame > 1)
             {
