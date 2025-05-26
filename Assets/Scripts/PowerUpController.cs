@@ -6,6 +6,8 @@ public class PowerUpController : ManagedUpdateBehaviourNoMono
     public Vector3 size = Vector3.one;
     public override void UpdateMe()
     {
+        if (isPaused) return;
+
         Vector3 pos = gameObject.transform.position;
 
         pos.y += -1 * speedScale * Time.deltaTime;

@@ -13,6 +13,8 @@ public class PlayerMovement : ManagedUpdateBehaviourNoMono
 
     public override void UpdateMe()
     {
+        if (isPaused) return;
+
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             lastDirection = -1;

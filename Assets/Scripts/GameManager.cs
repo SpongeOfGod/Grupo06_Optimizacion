@@ -9,12 +9,20 @@ using System;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using Random = UnityEngine.Random;
+using UnityEngine.Audio;
+using Unity.Mathematics;
 
 public class GameManager : CustomUpdateManager
 {
     public static GameManager Instance;
 
     [Header("Gameplay Properties")]
+    public AudioMixerGroup Global;
+    public AudioMixerGroup BGM;
+    public AudioMixerGroup SFX;
+    public TextMeshProUGUI GlobalVolText, BGMVolText, SFXVolText;
+    public int GlobalVol, BGMVol, SFXVol;
+    public GameObject PauseObject;
     public AudioSource SFXAudiorSource;
 
     public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
@@ -77,6 +85,7 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject ballDestroyParticles;
 
     [Header("Managers")]
+    PauseManager PauseManager;
     BallManager ballManager;
     CollisionManager collisionManager;
     public LevelManager LevelManager;
@@ -126,10 +135,12 @@ public class GameManager : CustomUpdateManager
         ballManager = new BallManager();
         collisionManager = new CollisionManager();
         LevelManager = new LevelManager();
+        PauseManager = new PauseManager();
 
         ballManager.GameObject = gameObject;
         collisionManager.GameObject = gameObject;
         LevelManager.GameObject = gameObject;
+        PauseManager.GameObject = gameObject;
 
         BallMaterialBlock = new MaterialPropertyBlock();
         BallMaterialBlock.SetColor("_Color", Color.white);
@@ -336,6 +347,7 @@ public class GameManager : CustomUpdateManager
             }
         }
 
+
         switch (sceneName)
         {
             case "MainMenu":
@@ -382,6 +394,7 @@ public class GameManager : CustomUpdateManager
         scriptsBehaviourNoMono.Add(ballManager);
         scriptsBehaviourNoMono.Add(collisionManager);
         scriptsBehaviourNoMono.Add(LevelManager);
+        scriptsBehaviourNoMono.Add(PauseManager);
         scriptsBehaviourNoMono.Add(Player);
         particlePool.InitializePool();
 
@@ -391,12 +404,35 @@ public class GameManager : CustomUpdateManager
     private void GameplayUpdate()
     {
         if (Input.GetKeyDown(KeyCode.Escape))
-            SceneManager.LoadScene("MainMenu");
+            //SceneManager.LoadScene("MainMenu");
 
-        BallBounce.text = ballBounce.ToString();
-        Blocksleft.text = blocksLeft.ToString();
+        BallBounce.text = $"{ballBounce}";
+        Blocksleft.text = $"{blocksLeft}";
+
+        Global.audioMixer.GetFloat("MasterVol", out float Globalvalue);
+        BGM.audioMixer.GetFloat("BGMVol", out float BGMvalue);
+        SFX.audioMixer.GetFloat("BGSVol", out float BGSvalue);
+
+        GlobalVol = (int)math.remap(-80, 20, 0, 100, Globalvalue);
+        BGMVol = (int)math.remap(-80, 20, 0, 100, BGMvalue);
+        SFXVol = (int)math.remap(-80, 20, 0, 100, BGSvalue);
+
+
+
+        GlobalVolText.text = GlobalVol.ToString();
+        BGMVolText.text = BGMVol.ToString();
+        SFXVolText.text = SFXVol.ToString();
 
         UpdatePowerUpText();
+
+
+        if (Input.GetKeyDown(KeyCode.Escape)) 
+        {
+            for (int i = 0; i < scriptsBehaviourNoMono.Count; i++)
+                scriptsBehaviourNoMono[i].isPaused = !scriptsBehaviourNoMono[i].isPaused;
+            
+            PauseObject.SetActive(!PauseObject.activeSelf);
+        }
 
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha0))

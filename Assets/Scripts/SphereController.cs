@@ -27,6 +27,8 @@ public class SphereController : ManagedUpdateBehaviourNoMono
 
     public override void UpdateMe()
     {
+        if (isPaused) return;
+
         if (!InitialLaunch || !gameObject.activeSelf) return;
 
         if (InitialSpeed == Vector2.zero) InitialSpeed = new Vector2(12, 12);
