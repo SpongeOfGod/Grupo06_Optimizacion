@@ -58,7 +58,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             if (renderer != null)
                 renderer.GetPropertyBlock(MaterialPropertyBlock);
 
-            gameObject = GameManager.Instance.CreateBrickVariation(this, Mathf.Clamp(Durability - 1, 0, 10));
+            gameObject = GameManager.Instance.CreateBrickVariation(this, "brick" + $"{Mathf.Clamp(Durability - 1, 0, 10)}");
             renderer = gameObject.GetComponent<Renderer>();
             renderer.SetPropertyBlock(MaterialPropertyBlock);
             GameObject Particles = GameManager.Instance.particlePool.GetParticles();

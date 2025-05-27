@@ -22,7 +22,7 @@ public class GameManager : CustomUpdateManager
     public AudioMixerGroup SFX;
     public TextMeshProUGUI GlobalVolText, BGMVolText, SFXVolText;
     public int GlobalVol, BGMVol, SFXVol;
-    public GameObject PauseObject;
+
     public AudioSource SFXAudiorSource;
 
     public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
@@ -47,7 +47,10 @@ public class GameManager : CustomUpdateManager
     public ParticlePool particlePool;
     public List<GameObject> brickVariations = new List<GameObject>();
     [SerializeField]
-    private List<AssetReference> assetReferences;
+    private List<AssetReferenceGameObject> assetReferencesGameObjects;
+
+    [SerializeField]
+    private List<AssetReferenceTexture2D> assetReferencesTextures2D;
 
     bool initialized;
     int score = 0;
@@ -55,6 +58,11 @@ public class GameManager : CustomUpdateManager
     int playerLifes = 3;
     public int ballBounce;
     public int blocksLeft;
+
+    [Header("Pause Settings")]
+    public GameObject PauseObject;
+    public List<GameObject> PauseButtonsList;
+    public GameObject PointerPause;
 
     [Header("PowerUp Settings")]
     public PowerUpSettings PowerUpSettings;
@@ -239,9 +247,13 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
-    public GameObject CreateBrickVariation(BrickController controller, int index) 
+    public GameObject CreateBrickVariation(BrickController controller, string name) 
     {
-        GameObject brick = Instantiate(brickVariations[index], controller.GameObject.transform.position, controller.GameObject.transform.rotation, levelParent.transform);
+        GameObject brick = GetInstance(name);
+
+        brick.transform.position = controller.GameObject.transform.position;
+        brick.transform.rotation = controller.GameObject.transform.rotation;
+        brick.transform.parent = levelParent.transform;
 
         GameObject previousBrick = controller.GameObject;
 
@@ -351,6 +363,7 @@ public class GameManager : CustomUpdateManager
         switch (sceneName)
         {
             case "MainMenu":
+                PauseLogic();
                 break;
             case "Gameplay":
                 GameplayUpdate();
@@ -381,6 +394,7 @@ public class GameManager : CustomUpdateManager
     {
         if (TitleObject != null)
         {
+            scriptsBehaviourNoMono.Add(PauseManager);
             TitleAnimation titleAnimation = new TitleAnimation { GameObject = TitleObject };
             scriptsBehaviourNoMono.Add(titleAnimation);
 
@@ -403,12 +417,28 @@ public class GameManager : CustomUpdateManager
 
     private void GameplayUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            //SceneManager.LoadScene("MainMenu");
-
         BallBounce.text = $"{ballBounce}";
         Blocksleft.text = $"{blocksLeft}";
+        PauseLogic();
 
+        UpdatePowerUpText();
+
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+        {
+            LevelManager.CreateSphere();
+            LevelManager.CreateSphere();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+        {
+            EnableFireBall();
+        }
+#endif
+    }
+
+    private void PauseLogic()
+    {
         Global.audioMixer.GetFloat("MasterVol", out float Globalvalue);
         BGM.audioMixer.GetFloat("BGMVol", out float BGMvalue);
         SFX.audioMixer.GetFloat("BGSVol", out float BGSvalue);
@@ -423,29 +453,20 @@ public class GameManager : CustomUpdateManager
         BGMVolText.text = BGMVol.ToString();
         SFXVolText.text = SFXVol.ToString();
 
-        UpdatePowerUpText();
-
-
-        if (Input.GetKeyDown(KeyCode.Escape)) 
+        if (Input.GetKeyDown(KeyCode.Escape) && sceneName == "Gameplay")
         {
-            for (int i = 0; i < scriptsBehaviourNoMono.Count; i++)
-                scriptsBehaviourNoMono[i].isPaused = !scriptsBehaviourNoMono[i].isPaused;
-            
-            PauseObject.SetActive(!PauseObject.activeSelf);
+            PauseTrigger();
         }
+    }
 
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Alpha0))
-        {
-            LevelManager.CreateSphere();
-            LevelManager.CreateSphere();
-        }
+    public void PauseTrigger()
+    {
+        for (int i = 0; i < scriptsBehaviourNoMono.Count; i++)
+            scriptsBehaviourNoMono[i].isPaused = !scriptsBehaviourNoMono[i].isPaused;
 
-        if (Input.GetKeyDown(KeyCode.Alpha9))
-        {
-            EnableFireBall();
-        }
-#endif
+        PauseManager.index = 0;
+
+        PauseObject.SetActive(!PauseObject.activeSelf);
     }
 
     public void LevelAppear()
@@ -623,9 +644,10 @@ public class GameManager : CustomUpdateManager
     #region Coroutines
     private IEnumerator LoadAssetsCoroutine()
     {
-        int assetsToLoad = assetReferences.Count;
+        int assetsToLoad = assetReferencesGameObjects.Count;
         int assetsLoaded = 0;
-        foreach (AssetReference assetReference in assetReferences)
+        bool gameObjectLoaded = false;
+        foreach (AssetReferenceGameObject assetReference in assetReferencesGameObjects)
         {
             AsyncOperationHandle<GameObject> handle =
             assetReference.LoadAssetAsync<GameObject>();
@@ -636,9 +658,33 @@ public class GameManager : CustomUpdateManager
                 String assetName = handle.Result.name.Split(" ")[0];
                 assetsManager.loadedAssetsGameObjects.Add(assetName, handle.Result);
                 assetsLoaded++;
-            }
+            }            
+
         }
         if (assetsLoaded == assetsToLoad)
+            gameObjectLoaded = true;
+
+        assetsToLoad = assetReferencesTextures2D.Count;
+        assetsLoaded = 0;
+
+        foreach (AssetReferenceTexture2D assetReference in assetReferencesTextures2D)
+        {
+            if (assetReference.GetType() == typeof(AssetReferenceTexture2D))
+            {
+                AsyncOperationHandle<Texture2D> handle =
+                assetReference.LoadAssetAsync<Texture2D>();
+
+                yield return handle;
+                if (handle.Status == AsyncOperationStatus.Succeeded)
+                {
+                    String assetName = handle.Result.name.Split(" ")[0];
+                    assetsManager.loadedAssetsTextures.Add(assetName, handle.Result);
+                    assetsLoaded++;
+                }
+            }
+        }
+
+        if (gameObjectLoaded) 
         {
             assetsManager.ExecuteEvent();
             assetsManager.assetsLoaded = true;

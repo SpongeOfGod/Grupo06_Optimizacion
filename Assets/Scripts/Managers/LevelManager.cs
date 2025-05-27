@@ -265,111 +265,111 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             case 1:
                 Durability_2 = new List<int> { 1, 2, 3, 4, 5, 7, 13, 14, 20 };
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
                 break;
 
             case 2:
                 Durability_2 = new List<int> { 1, 3, 5, 21, 23, 25, 27};
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_3 = new List<int> { 7, 9, 11, 13, 15, 17, 19};
 
-                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, "brick2");
                 break;
 
             case 3:
                 Durability_4 = new List<int> {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 4:
                 Durability_2 = new List<int> { 0, 2, 3, 4, 6, 10, 17 };
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_4 = new List<int> { 8, 12 };
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 5:
                 Durability_2 = new List<int> { 2, 3, 9, 10, 11, 16, 17, 18, 24, 25};
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_4 = new List<int> { 0, 7, 13, 14, 20, 27};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 6:
                 Durability_2 = new List<int> { 7, 8, 12, 13, 17, 21, 22, 23, 24, 25, 26, 27};
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_4 = new List<int> { 0, 1, 5, 6, 9, 10, 11};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 7:
                 Durability_2 = new List<int> { 14, 16, 18, 20};
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_3 = new List<int> { 0, 2, 4, 6};
 
-                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, "brick2");
 
                 Durability_4 = new List<int> {7, 9, 11, 13, 21, 22, 23, 24, 25, 26, 27};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 8:
                 Durability_2 = new List<int> { 7, 9, 10, 11, 13, 14, 17, 20, 21, 23, 25, 27 };
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_3 = new List<int> {1, 2, 3, 4, 5, 15, 19, 22, 26};
 
-                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, "brick2");
 
                 Durability_4 = new List<int> { 0, 6, 8, 12, 16, 18, 24};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 9:
                 Durability_2 = new List<int> { 0, 1, 5, 6};
 
-                ChangeDurability(indexToSearch, controller, Durability_2, 2, 1);
+                ChangeDurability(indexToSearch, controller, Durability_2, 2, "brick1");
 
                 Durability_4 = new List<int> { 10, 14, 15, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27};
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
 
             case 10:
                 Durability_3 = new List<int> { 0, 2, 3, 4, 6, 7, 10, 13 };
 
-                ChangeDurability(indexToSearch, controller, Durability_3, 3, 2);
+                ChangeDurability(indexToSearch, controller, Durability_3, 3, "brick2");
 
                 Durability_4 = new List<int> { 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27 };
 
-                ChangeDurability(indexToSearch, controller, Durability_4, 4, 3);
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
         }
     }
 
-    private static void ChangeDurability(int indexToSearch, BrickController controller, List<int> DurabilityList, int newDurability, int brickvariation)
+    private static void ChangeDurability(int indexToSearch, BrickController controller, List<int> DurabilityList, int newDurability, string nameToSearch)
     {
         if (DurabilityList.Contains(indexToSearch))
         {
             controller.Durability = newDurability;
-            controller.GameObject = GameManager.Instance.CreateBrickVariation(controller, brickvariation);
+            controller.GameObject = GameManager.Instance.CreateBrickVariation(controller, nameToSearch);
         }
     }
 
