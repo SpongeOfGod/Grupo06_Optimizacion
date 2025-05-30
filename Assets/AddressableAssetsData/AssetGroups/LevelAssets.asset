@@ -32,6 +32,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78f83f659da862743a14dc0f7154d42f
+    m_Address: Assets/Visual/Models/tinySphere.fbx
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 235663d0e22057f4292d0c9b535ff7a7, type: 2}
   m_SchemaSet:

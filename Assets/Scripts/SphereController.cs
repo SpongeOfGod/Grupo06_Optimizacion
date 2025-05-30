@@ -27,7 +27,7 @@ public class SphereController : ManagedUpdateBehaviourNoMono
 
     public override void UpdateMe()
     {
-        if (isPaused) return;
+        if (isPaused || GameManager.Instance.PauseManager.isPaused) return;
 
         if (!InitialLaunch || !gameObject.activeSelf) return;
 

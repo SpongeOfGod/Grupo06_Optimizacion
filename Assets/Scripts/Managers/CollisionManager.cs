@@ -11,6 +11,8 @@ public class CollisionManager : ManagedUpdateBehaviourNoMono
     BombPowerUp bomb;
     public override void UpdateMe()
     {
+        if (GameManager.Instance.PauseManager.isPaused) return;
+
         SphereCollision();
 
         PowerUpCollision();

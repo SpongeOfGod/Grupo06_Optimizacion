@@ -936,6 +936,7 @@ GameObject:
   m_Component:
   - component: {fileID: 475967761}
   - component: {fileID: 475967760}
+  - component: {fileID: 475967763}
   - component: {fileID: 475967762}
   m_Layer: 0
   m_Name: GameManager
@@ -956,6 +957,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20da30ecc3828a34499180891f859001, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  XScreenThresshold: {x: 0, y: 0}
+  YScreenThresshold: {x: 0, y: 0}
+  BrickPositions: []
+  levelParent: {fileID: 0}
+  powerUpParent: {fileID: 0}
+  ballsInGame: 0
+  lifeManager: {fileID: 0}
+  particleParent: {fileID: 0}
+  brickVariations: []
+  assetReferencesGameObjects: []
+  assetReferencesTextures2D: []
+  ballBounce: 0
+  blocksLeft: 0
   Global: {fileID: 24300002, guid: 6e66ae7b2ed27e044808a90d32480103, type: 2}
   BGM: {fileID: -7928214247415350381, guid: 6e66ae7b2ed27e044808a90d32480103, type: 2}
   SFX: {fileID: 2499056631046455755, guid: 6e66ae7b2ed27e044808a90d32480103, type: 2}
@@ -972,18 +986,6 @@ MonoBehaviour:
   PowerDownClip: {fileID: 0}
   PowerUpClip: {fileID: 0}
   SelectClip: {fileID: 8300000, guid: fae4cb36cecf96e47b877bcce434068d, type: 3}
-  XScreenThresshold: {x: 0, y: 0}
-  YScreenThresshold: {x: 0, y: 0}
-  BrickPositions: []
-  levelParent: {fileID: 0}
-  powerUpParent: {fileID: 0}
-  ballsInGame: 0
-  lifeManager: {fileID: 0}
-  particleParent: {fileID: 0}
-  brickVariations: []
-  assetReferences: []
-  ballBounce: 0
-  blocksLeft: 0
   PauseObject: {fileID: 1142570930}
   PauseButtonsList:
   - {fileID: 1377772292}
@@ -1038,6 +1040,103 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 2499056631046455755, guid: 6e66ae7b2ed27e044808a90d32480103,
     type: 2}
   m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &475967763
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 475967759}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: -7928214247415350381, guid: 6e66ae7b2ed27e044808a90d32480103,
+    type: 2}
+  m_audioClip: {fileID: 8300000, guid: 9de67d9ddcf9bf44bac5a114d24b0f87, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
@@ -3374,7 +3473,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96

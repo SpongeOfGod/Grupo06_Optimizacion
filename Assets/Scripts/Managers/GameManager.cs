@@ -17,15 +17,7 @@ public class GameManager : CustomUpdateManager
     public static GameManager Instance;
 
     [Header("Gameplay Properties")]
-    public AudioMixerGroup Global;
-    public AudioMixerGroup BGM;
-    public AudioMixerGroup SFX;
-    public TextMeshProUGUI GlobalVolText, BGMVolText, SFXVolText;
-    public int GlobalVol, BGMVol, SFXVol;
 
-    public AudioSource SFXAudiorSource;
-
-    public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
     public Vector2 XScreenThresshold;
     public Vector2 YScreenThresshold;
     public PlayerMovement Player;
@@ -58,6 +50,17 @@ public class GameManager : CustomUpdateManager
     int playerLifes = 3;
     public int ballBounce;
     public int blocksLeft;
+
+    [Header("Audio Settings")]
+    public AudioMixerGroup Global;
+    public AudioMixerGroup BGM;
+    public AudioMixerGroup SFX;
+    public TextMeshProUGUI GlobalVolText, BGMVolText, SFXVolText;
+    public int GlobalVol, BGMVol, SFXVol;
+
+    public AudioSource SFXAudiorSource;
+
+    public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
 
     [Header("Pause Settings")]
     public GameObject PauseObject;
@@ -93,12 +96,12 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject ballDestroyParticles;
 
     [Header("Managers")]
-    PauseManager PauseManager;
+    public PauseManager PauseManager;
+    public LevelManager LevelManager;
+    public AssetsManager assetsManager;
     BallManager ballManager;
     CollisionManager collisionManager;
-    public LevelManager LevelManager;
     [SerializeField] List<GameObject> powerUpControllers;
-    public AssetsManager assetsManager;
 
     public List<GameObject> BricksPrefab { get => bricksPrefab; }
     public List<PowerUpController> activePowerUps = new List<PowerUpController>();
@@ -394,6 +397,7 @@ public class GameManager : CustomUpdateManager
     {
         if (TitleObject != null)
         {
+            Time.timeScale = 1f;
             scriptsBehaviourNoMono.Add(PauseManager);
             TitleAnimation titleAnimation = new TitleAnimation { GameObject = TitleObject };
             scriptsBehaviourNoMono.Add(titleAnimation);
@@ -467,6 +471,8 @@ public class GameManager : CustomUpdateManager
         PauseManager.index = 0;
 
         PauseObject.SetActive(!PauseObject.activeSelf);
+
+        Time.timeScale = PauseObject.activeSelf ? 0.00001f : 1;
     }
 
     public void LevelAppear()
@@ -700,7 +706,7 @@ public class GameManager : CustomUpdateManager
 
         while (elapsedTime < lerpDuration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += PauseManager.isPaused ? 0 : Time.deltaTime;
             float lerpFactor = 1 - Mathf.Pow(1 - (elapsedTime / lerpDuration), 3);
             levelParent.transform.position = Vector3.Lerp(initialPosition, endPosition, lerpFactor);
             yield return null;
@@ -722,7 +728,7 @@ public class GameManager : CustomUpdateManager
 
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += PauseManager.isPaused ? 0 : Time.deltaTime;
 
             float t = Mathf.PingPong(Time.time * flickerSpeed, 1f);
             ScoreCount.color = Color.Lerp(colorA, colorB, t);
@@ -758,7 +764,7 @@ public class GameManager : CustomUpdateManager
         {
             Player.fireBallPad = true;
 
-            elapsedTime += Time.deltaTime;
+            elapsedTime += PauseManager.isPaused ? 0 : Time.deltaTime;
 
             for (int i = 0; i < currentPowerUps.Count; i++)
             {
@@ -798,7 +804,7 @@ public class GameManager : CustomUpdateManager
 
         while (timer > 0f)
         {
-            timer -= Time.deltaTime;
+            timer -= PauseManager.isPaused ? 0 : Time.deltaTime;
 
             for (int i = 0; i < currentPowerUps.Count; i++)
             {
@@ -826,7 +832,7 @@ public class GameManager : CustomUpdateManager
         float elapsed = 0f;
         while (elapsed < duration)
         {
-            elapsed += Time.deltaTime;
+            elapsed += PauseManager.isPaused ? 0 : Time.deltaTime;
             float t = Mathf.Clamp01(elapsed / duration);
             Player.Size = Vector3.Lerp(fromSize, toSize, t);
             PlayerRect.transform.localScale = Vector3.Lerp(fromScale, toScale, t);
@@ -851,7 +857,7 @@ public class GameManager : CustomUpdateManager
         float elapsedTime = 0;
         while (elapsedTime < duration)
         {
-            elapsedTime += Time.deltaTime;
+            elapsedTime += PauseManager.isPaused ? 0 : Time.deltaTime;
 
             for (int i = 0; i < currentPowerUps.Count; i++)
             {
