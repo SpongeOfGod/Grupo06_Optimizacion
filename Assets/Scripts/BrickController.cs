@@ -27,6 +27,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
         if (powerUp != null)
         {
+            GameManager.Instance.PlayAudio(GameManager.Instance.PowerUpSpawnClip);
             powerUp.GameObject.SetActive(true);
             if ((new Vector3(3, 3, 3)).magnitude < (powerUp.GameObject.transform.localScale).magnitude)
                 powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(3, 3, 3);

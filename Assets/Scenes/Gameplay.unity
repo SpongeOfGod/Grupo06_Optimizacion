@@ -2987,8 +2987,10 @@ MonoBehaviour:
   BallBounceClip: {fileID: 8300000, guid: 4e42b88273866ed4dad069216f961173, type: 3}
   ExplosionClip: {fileID: 8300000, guid: 958b7b99a3372a640bea60832d5502a4, type: 3}
   PowerDownClip: {fileID: 8300000, guid: 0c17303a9065c5749b1f87b7a7642a5e, type: 3}
-  PowerUpClip: {fileID: 8300000, guid: 01ab9e0e7d8e18143bdef38d3753bebe, type: 3}
+  PowerUpClip: {fileID: 8300000, guid: bfc489c911b1e7242aa380b86066de9d, type: 3}
   SelectClip: {fileID: 8300000, guid: fae4cb36cecf96e47b877bcce434068d, type: 3}
+  PowerUpSpawnClip: {fileID: 8300000, guid: 6e7167055d16ef049a05f9a8b9a3f639, type: 3}
+  WinClip: {fileID: 8300000, guid: f559de45f0497ae4896c9b47773b875c, type: 3}
   PauseObject: {fileID: 1720379691}
   PauseButtonsList:
   - {fileID: 1997327502}

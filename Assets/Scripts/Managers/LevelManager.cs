@@ -129,6 +129,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (!anyBrickActive)
         {
             internalLevel++;
+            GameManager.Instance.PlayAudio(GameManager.Instance.WinClip);
 
             if (internalLevel >= 11 || internalLevel <= 0) 
             {

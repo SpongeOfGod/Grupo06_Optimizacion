@@ -60,7 +60,7 @@ public class GameManager : CustomUpdateManager
 
     public AudioSource SFXAudiorSource;
 
-    public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip;
+    public AudioClip LoseLifeClip, BallBounceClip, ExplosionClip, PowerDownClip, PowerUpClip, SelectClip, PowerUpSpawnClip, WinClip;
 
     [Header("Pause Settings")]
     public GameObject PauseObject;
@@ -662,6 +662,7 @@ public class GameManager : CustomUpdateManager
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
                 String assetName = handle.Result.name.Split(" ")[0];
+                Debug.Log(assetName);
                 assetsManager.loadedAssetsGameObjects.Add(assetName, handle.Result);
                 assetsLoaded++;
             }            
@@ -684,6 +685,8 @@ public class GameManager : CustomUpdateManager
                 if (handle.Status == AsyncOperationStatus.Succeeded)
                 {
                     String assetName = handle.Result.name.Split(" ")[0];
+                    Debug.Log(assetName);
+
                     assetsManager.loadedAssetsTextures.Add(assetName, handle.Result);
                     assetsLoaded++;
                 }
