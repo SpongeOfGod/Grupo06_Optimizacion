@@ -40,6 +40,15 @@ public class AssetsManager
         GameManager.Instance.LoadAssets();
     }
 
+    public void UnloadAssets() 
+    {
+        foreach (var item in loadedAssetsGameObjects)
+            Addressables.Release(item.Value);
+
+        foreach (var item in loadedAssetsTextures)
+            Addressables.Release(item.Value);
+    }
+
     public void ExecuteEvent()
     {
         OnLoadComplete?.Invoke();

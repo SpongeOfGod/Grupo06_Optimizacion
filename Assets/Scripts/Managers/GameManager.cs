@@ -160,8 +160,8 @@ public class GameManager : CustomUpdateManager
 
         GenerateBrickGrid();
 
-        if (SceneManager.GetActiveScene().name == "Gameplay")
-            LevelManager.InitializeLevel();
+        //if (SceneManager.GetActiveScene().name == "Gameplay")
+        //    LevelManager.InitializeLevel();
 
         SetParallax();
     }
@@ -342,7 +342,7 @@ public class GameManager : CustomUpdateManager
     {
         base.Update();
 
-        if (!initialized)
+        if (!initialized && assetsManager.assetsLoaded)
         {
             initialized = true;
 
@@ -411,6 +411,7 @@ public class GameManager : CustomUpdateManager
     {
         scriptsBehaviourNoMono.Add(ballManager);
         scriptsBehaviourNoMono.Add(collisionManager);
+        LevelManager.InitializeLevel();
         scriptsBehaviourNoMono.Add(LevelManager);
         scriptsBehaviourNoMono.Add(PauseManager);
         scriptsBehaviourNoMono.Add(Player);

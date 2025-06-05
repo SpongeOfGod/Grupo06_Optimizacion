@@ -967,7 +967,11 @@ MonoBehaviour:
   particleParent: {fileID: 0}
   brickVariations: []
   assetReferencesGameObjects: []
-  assetReferencesTextures2D: []
+  assetReferencesTextures2D:
+  - m_AssetGUID: 6a8bfb695faec8e4dbf8ece6a8ef538c
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_EditorAssetChanged: 0
   ballBounce: 0
   blocksLeft: 0
   Global: {fileID: 24300002, guid: 6e66ae7b2ed27e044808a90d32480103, type: 2}
@@ -986,6 +990,8 @@ MonoBehaviour:
   PowerDownClip: {fileID: 0}
   PowerUpClip: {fileID: 0}
   SelectClip: {fileID: 8300000, guid: fae4cb36cecf96e47b877bcce434068d, type: 3}
+  PowerUpSpawnClip: {fileID: 0}
+  WinClip: {fileID: 0}
   PauseObject: {fileID: 1142570930}
   PauseButtonsList:
   - {fileID: 1377772292}

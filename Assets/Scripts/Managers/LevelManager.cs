@@ -14,6 +14,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
     int internalLevel = 0;
 
+    bool debugStress;
     public void InitializeLevel()
     {
         if (!gManager)
@@ -81,13 +82,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
         bool anyBrickActive = false;
 
-        //for (int i = gManager.Bricks.Count; i < 0; i--)
-        //{
-        //    if (gManager.Bricks[i].GameObject == null)
-        //        gManager.Bricks.RemoveAt(i);
-        //}
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Period)) 
+        if (Input.GetKeyDown(KeyCode.Period) || debugStress) 
         {
             internalLevel++;
             foreach (var brick in Bricks)
@@ -97,6 +93,11 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                     brick.CollideReaction();
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            debugStress = !debugStress;
         }
 
         if (Input.GetKeyDown(KeyCode.Comma))

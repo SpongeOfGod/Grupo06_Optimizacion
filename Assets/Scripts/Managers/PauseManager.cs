@@ -83,8 +83,11 @@ public class PauseManager : ManagedUpdateBehaviourNoMono
 
             case 4:
 
-                if (Input.GetKeyDown(KeyCode.Return))
+                if (Input.GetKeyDown(KeyCode.Return)) 
+                {
+                    GameManager.Instance.assetsManager.UnloadAssets();
                     SceneManager.LoadScene("MainMenu");
+                }
                 break;
         }
     }
