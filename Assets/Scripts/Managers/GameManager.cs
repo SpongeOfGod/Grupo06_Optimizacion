@@ -192,6 +192,7 @@ public class GameManager : CustomUpdateManager
     private GameObject CreatePooledItem()
     {
         GameObject ball = GetInstance("sphere");
+        ball.transform.parent = levelParent.transform;
         ball.transform.position = transform.position;
         return ball;
     }
