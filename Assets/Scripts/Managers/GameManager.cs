@@ -24,6 +24,7 @@ public class GameManager : CustomUpdateManager
 
     public List<Vector3> BrickPositions = new List<Vector3>();
     public List<BrickController> Bricks = new List<BrickController>();
+    public GameObject levelObjects;
     public GameObject levelParent;
     public GameObject powerUpParent;
     public ObjectPool<GameObject> BrickPool;
@@ -192,14 +193,14 @@ public class GameManager : CustomUpdateManager
     private GameObject CreatePooledItem()
     {
         GameObject ball = GetInstance("sphere");
-        ball.transform.parent = levelParent.transform;
+        ball.transform.parent = levelObjects.transform;
         ball.transform.position = transform.position;
         return ball;
     }
 
     public void InitializePool()
     {
-        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, false, 28, 28);
+        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 28, 28);
     }
 
     private void BrickOnDestroyPoolObject(GameObject Gobject)
