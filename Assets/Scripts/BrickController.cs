@@ -6,6 +6,7 @@ using UnityEngine.Pool;
 public class BrickController : ManagedUpdateBehaviourNoMono
 {
     public ObjectPool<GameObject> MyPool;
+    public MeshFilter meshFilter;
     public Vector3 Size = Vector3.one;
     public PowerUpController powerUp;
     public Color brickColor = Color.red;
@@ -59,7 +60,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             if (renderer != null)
                 renderer.GetPropertyBlock(MaterialPropertyBlock);
 
-            gameObject = GameManager.Instance.CreateBrickVariation(this, "brick" + $"{Mathf.Clamp(Durability - 1, 0, 10)}");
+            meshFilter.mesh = GameManager.Instance.GetBrickVariation(this, Mathf.Clamp(Durability - 1, 0, 10));
             renderer = gameObject.GetComponent<Renderer>();
             renderer.SetPropertyBlock(MaterialPropertyBlock);
             GameObject Particles = GameManager.Instance.particlePool.GetParticles();

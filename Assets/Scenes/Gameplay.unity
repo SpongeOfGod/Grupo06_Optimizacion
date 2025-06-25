@@ -2981,6 +2981,7 @@ MonoBehaviour:
   XScreenThresshold: {x: -8.5, y: 2.04}
   YScreenThresshold: {x: 5.6, y: -5.6}
   BrickPositions: []
+  levelObjects: {fileID: 683616433}
   levelParent: {fileID: 1364670820}
   powerUpParent: {fileID: 1920231225}
   ballsInGame: 0
@@ -2991,6 +2992,11 @@ MonoBehaviour:
   - {fileID: 3491587750236115902, guid: e952b1aa5f5667a4c8aef028b21bbcc9, type: 3}
   - {fileID: 3491587750236115902, guid: e7e92c8664b75704480be06be2f0211b, type: 3}
   - {fileID: 3491587750236115902, guid: af365e180d5711843a365775db129d40, type: 3}
+  BrickMeshes:
+  - {fileID: 4579454407841743219, guid: dbf6d06eb2f02974da89727eeedfa83f, type: 3}
+  - {fileID: -8663802791670341782, guid: 0905758e1f802ee49a9e0bbfbcba7704, type: 3}
+  - {fileID: -8663802791670341782, guid: 83f0890894d2bf349a2f2114148e0ff3, type: 3}
+  - {fileID: -8663802791670341782, guid: 28ab14ab93d9fd54489cc0ee3e8b10d1, type: 3}
   assetReferencesGameObjects:
   - m_AssetGUID: d41ed74013aea244092a1c6a8c10eef4
     m_SubObjectName: 

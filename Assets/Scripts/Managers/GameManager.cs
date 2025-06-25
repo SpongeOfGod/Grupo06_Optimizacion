@@ -39,6 +39,10 @@ public class GameManager : CustomUpdateManager
     public GameObject particleParent;
     public ParticlePool particlePool;
     public List<GameObject> brickVariations = new List<GameObject>();
+
+    [SerializeField]
+    private List<Mesh> BrickMeshes;
+
     [SerializeField]
     private List<AssetReferenceGameObject> assetReferencesGameObjects;
 
@@ -200,7 +204,7 @@ public class GameManager : CustomUpdateManager
 
     public void InitializePool()
     {
-        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, true, 28, 28);
+        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, false, 28, 28);
     }
 
     private void BrickOnDestroyPoolObject(GameObject Gobject)
@@ -210,7 +214,14 @@ public class GameManager : CustomUpdateManager
 
     private void BrickOnReturnedToPool(GameObject Gobject)
     {
-        Gobject.SetActive(false);
+        if (BrickPool.CountInactive >= 28)
+        {
+            Destroy(Gobject);
+        }
+        else 
+        {
+            Gobject.SetActive(false);
+        }
     }
 
     private void BrickOnTakeFromPool(GameObject Gobject)
@@ -252,21 +263,26 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
-    public GameObject CreateBrickVariation(BrickController controller, string name) 
+    public Mesh GetBrickVariation(BrickController controller, int index) 
     {
-        GameObject brick = GetInstance(name);
+        Mesh mesh = null;
+        switch (index) 
+        {
+            case 0:
+                mesh = BrickMeshes[index];
+                break;
+            case 1:
+                mesh = BrickMeshes[index];
+                break;
+            case 2:
+                mesh = BrickMeshes[index];
+                break;
+            case 3:
+                mesh = BrickMeshes[index];
+                break;
+        }
 
-        brick.transform.position = controller.GameObject.transform.position;
-        brick.transform.rotation = controller.GameObject.transform.rotation;
-        brick.transform.parent = levelParent.transform;
-
-        GameObject previousBrick = controller.GameObject;
-
-        controller.GameObject = brick;
-
-        Destroy(previousBrick);
-
-        return brick;
+        return mesh;
     }
 
     public GameObject SpawnDestroyParticles()
@@ -411,6 +427,8 @@ public class GameManager : CustomUpdateManager
 
     private void InitializeGameplay()
     {
+        InitializePool();
+
         scriptsBehaviourNoMono.Add(ballManager);
         scriptsBehaviourNoMono.Add(collisionManager);
         LevelManager.InitializeLevel();
@@ -419,11 +437,25 @@ public class GameManager : CustomUpdateManager
         scriptsBehaviourNoMono.Add(Player);
         particlePool.InitializePool();
 
-        InitializePool();
     }
 
     private void GameplayUpdate()
     {
+        for (int i = 0; i < Bricks.Count; i++)
+        {
+            var item = Bricks[i];
+
+            if (item.GameObject != null) 
+            {
+                item.meshFilter = item.GameObject.GetComponent<MeshFilter>();
+            }
+
+            if (item != null && item.meshFilter != null) 
+            {
+                item.meshFilter.mesh = Instance.GetBrickVariation(item, item.Durability - 1);
+            }
+        }
+
         BallBounce.text = $"{ballBounce}";
         Blocksleft.text = $"{blocksLeft}";
         PauseLogic();

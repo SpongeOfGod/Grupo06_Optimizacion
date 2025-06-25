@@ -36,6 +36,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             BrickController brickController = new BrickController();
             brickController.MyPool = gManager.BrickPool;
             brickController.GameObject = brick;
+            brickController.meshFilter = brick.GetComponent<MeshFilter>();
 
             PowerUpController powerUpController = null;
             if (powerUpCount < gManager.PowerUpSettings.QuantityPerLevel && Random.value > 0.70f)
@@ -150,6 +151,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 GameObject brick = gManager.BrickPool.Get();
                 item.GameObject = brick;
+                item.meshFilter = brick.GetComponent<MeshFilter>();
                 LevelBrickDurability(i, item);
 
                 item.GameObject.transform.localPosition = gManager.BrickPositions[i];
@@ -178,6 +180,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 bricksMaterial.TryAdd(item.GameObject, rendererBrick);
                 brickToController.TryAdd(item.GameObject, item);
+
+                item.meshFilter.mesh = GameManager.Instance.GetBrickVariation(item, item.Durability - 1);
 
                 SetPositionAndColor(item, item.GameObject.transform.localPosition, selectedGradient);
             }
@@ -371,7 +375,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         if (DurabilityList.Contains(indexToSearch))
         {
             controller.Durability = newDurability;
-            controller.GameObject = GameManager.Instance.CreateBrickVariation(controller, nameToSearch);
+            controller.meshFilter.mesh = GameManager.Instance.GetBrickVariation(controller, newDurability - 1);
         }
     }
 
