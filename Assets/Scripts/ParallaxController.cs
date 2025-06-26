@@ -1,46 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class ParallaxController : ManagedUpdateBehaviourNoMono
 {
-    private Vector3 parallaxPosition;
-    private float parallaxInitialPosition;
-
     private float parallaxLength;
     private float parallaxScale;
-    private Vector3 playerPosition;
-    
+
+    private Transform playerTransform;
+    private Vector3 startPosition;
+
     public void InitializeParallax(float length, float scale, PlayerMovement player)
     {
-        parallaxInitialPosition = 0;
-
-        playerPosition = player.GameObject.transform.position;
         parallaxLength = length;
         parallaxScale = scale;
+
+        playerTransform = player.GameObject.transform;
+        startPosition = gameObject.transform.position;
     }
 
     public override void UpdateMe()
     {
         if (GameManager.Instance == null || GameManager.Instance.Player == null)
-        return;
+            return;
 
-        Vector3 position = GameManager.Instance.Player.GameObject.transform.position;
+        float deltaX = playerTransform.position.x * parallaxScale;
+        Vector3 newPos = new Vector3(startPosition.x + deltaX, startPosition.y, startPosition.z);
 
-        float temp = position.x * (1 -  parallaxScale);
-        float distance = position.x * parallaxScale;
+        if (Mathf.Abs(playerTransform.position.x * (1 - parallaxScale)) > parallaxLength)
+        {
+            float offset = (playerTransform.position.x * (1 - parallaxScale)) % parallaxLength;
+            newPos.x = startPosition.x + deltaX - offset;
+        }
 
-        Vector3 newPosition = new Vector3(parallaxInitialPosition + distance, gameObject.transform.position.y, gameObject.transform.position.z);
-
-        parallaxPosition = newPosition;
-
-        if (temp > parallaxInitialPosition + (parallaxLength / 2))
-            parallaxInitialPosition += parallaxScale;
-
-        if(temp <  parallaxInitialPosition - (parallaxLength / 2))
-            parallaxInitialPosition -= parallaxScale;
-
-        gameObject.transform.position = newPosition;
+        gameObject.transform.position = newPos;
     }
 }
