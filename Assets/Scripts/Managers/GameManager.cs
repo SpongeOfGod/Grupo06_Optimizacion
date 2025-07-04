@@ -270,15 +270,27 @@ public class GameManager : CustomUpdateManager
         {
             case 0:
                 mesh = BrickMeshes[index];
+
+                if (mesh != null)
+                    return mesh;
                 break;
             case 1:
                 mesh = BrickMeshes[index];
+
+                if (mesh != null)
+                    return mesh;
                 break;
             case 2:
                 mesh = BrickMeshes[index];
+
+                if (mesh != null)
+                    return mesh;
                 break;
             case 3:
                 mesh = BrickMeshes[index];
+
+                if (mesh != null)
+                    return mesh;
                 break;
         }
 

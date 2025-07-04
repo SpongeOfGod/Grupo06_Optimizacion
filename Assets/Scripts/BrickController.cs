@@ -28,6 +28,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
         if (powerUp != null)
         {
+            Debug.Log($"Release Power up {Random.Range(0, 10)}");
             GameManager.Instance.PlayAudio(GameManager.Instance.PowerUpSpawnClip);
             powerUp.GameObject.SetActive(true);
             if ((new Vector3(3, 3, 3)).magnitude < (powerUp.GameObject.transform.localScale).magnitude)
@@ -51,6 +52,15 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             MyPool.Release(gameObject);
     }
 
+    public void RefreshBrick() 
+    {
+        if (meshFilter == null && gameObject != null) 
+        {
+            meshFilter = gameObject.GetComponent<MeshFilter>();
+            meshFilter.mesh = GameManager.Instance.GetBrickVariation(this, Durability);
+        }
+    }
+
     private void VisualEffects(int value)
     {
         if (gameObject != null) 
@@ -60,9 +70,13 @@ public class BrickController : ManagedUpdateBehaviourNoMono
             if (renderer != null)
                 renderer.GetPropertyBlock(MaterialPropertyBlock);
 
-            meshFilter.mesh = GameManager.Instance.GetBrickVariation(this, Mathf.Clamp(Durability - 1, 0, 10));
+            //meshFilter.mesh = GameManager.Instance.GetBrickVariation(this, Mathf.Clamp(Durability - 1, 0, 10));
             renderer = gameObject.GetComponent<Renderer>();
-            renderer.SetPropertyBlock(MaterialPropertyBlock);
+            MaterialPropertyBlock block = new();
+            renderer.GetPropertyBlock(block);
+            block.SetColor("_Color", MaterialPropertyBlock.GetColor("_Color"));
+            renderer.SetPropertyBlock(block);
+            brickColor = block.GetColor("_Color");
             GameObject Particles = GameManager.Instance.particlePool.GetParticles();
             Particles.gameObject.transform.position = gameObject.transform.position;
             GameManager.Instance.GiveColorParticle(Particles, brickColor);

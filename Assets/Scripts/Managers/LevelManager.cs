@@ -15,6 +15,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
     int internalLevel = 0;
 
     bool debugStress;
+
     public void InitializeLevel()
     {
         if (!gManager)
@@ -120,6 +121,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
         var bricksNumber = 0;
         foreach (var item in gManager.Bricks)
         {
+            item.RefreshBrick();
             if (item.GameObject != null && item.GameObject.activeSelf) 
             {
                 bricksNumber++;
@@ -151,7 +153,10 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 GameObject brick = gManager.BrickPool.Get();
                 item.GameObject = brick;
-                item.meshFilter = brick.GetComponent<MeshFilter>();
+
+                if (item.GameObject)
+                    item.meshFilter = item.GameObject.GetComponent<MeshFilter>();
+
                 LevelBrickDurability(i, item);
 
                 item.GameObject.transform.localPosition = gManager.BrickPositions[i];
@@ -402,6 +407,7 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             renderer.GetPropertyBlock(propertyBlock);
             propertyBlock.SetColor("_Color", interpolatedColor);
             renderer.SetPropertyBlock(propertyBlock);
+            brick.MaterialPropertyBlock = propertyBlock;
         }
 
         if (brickToController.TryGetValue(brick.GameObject, out var controller))
