@@ -174,11 +174,11 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 if (LevelCreationLogic(i)) continue;
 
-                GameObject brick = gManager.BrickPool.Get();
+                GameObject brick = null;
 
-                if (brick == null) 
+                while (brick == null) 
                 {
-                
+                    brick = gManager.BrickPool.Get();
                 }
 
                 item.GameObject = brick;

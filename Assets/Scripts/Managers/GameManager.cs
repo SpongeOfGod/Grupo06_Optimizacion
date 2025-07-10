@@ -271,35 +271,9 @@ public class GameManager : CustomUpdateManager
     public Mesh GetBrickVariation(BrickController controller, int index) 
     {
         Mesh mesh = null;
-        switch (index) 
-        {
-            case 0:
-                mesh = BrickMeshes[index];
-
-                if (mesh != null)
-                    return mesh;
-                break;
-            case 1:
-                mesh = BrickMeshes[index];
-
-                if (mesh != null)
-                    return mesh;
-                break;
-            case 2:
-                mesh = BrickMeshes[index];
-
-                if (mesh != null)
-                    return mesh;
-                break;
-            case 3:
-                mesh = BrickMeshes[index];
-
-                if (mesh != null)
-                    return mesh;
-                break;
-        }
-
+        mesh = BrickMeshes[index];
         return mesh;
+        
     }
 
     public GameObject SpawnDestroyParticles()
