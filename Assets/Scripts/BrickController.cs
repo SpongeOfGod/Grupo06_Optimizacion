@@ -15,6 +15,7 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
     public int Durability = 1;
     public MaterialPropertyBlock MaterialPropertyBlock;
+    public GameObject powerUpObject;
 
     public void CollideReaction()
     {
@@ -28,20 +29,22 @@ public class BrickController : ManagedUpdateBehaviourNoMono
 
         if (powerUp != null)
         {
-            Debug.Log($"Release Power up {Random.Range(0, 10)}");
-            GameManager.Instance.PlayAudio(GameManager.Instance.PowerUpSpawnClip);
-            powerUp.GameObject.SetActive(true);
-            if ((new Vector3(3, 3, 3)).magnitude < (powerUp.GameObject.transform.localScale).magnitude)
-                powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(3, 3, 3);
-            else
-                powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(1, 1, 1);
-            powerUp.GameObject.transform.SetParent(GameManager.Instance.powerUpParent.transform);
-            powerUp.speedScale = 5f;
-            Renderer renderer = powerUp.GameObject.GetComponent<Renderer>();
-            MaterialPropertyBlock MaterialPower = new MaterialPropertyBlock();
-            renderer.GetPropertyBlock(MaterialPower);
-            MaterialPower.SetColor("_Color", PowerUpColor);
-            renderer.SetPropertyBlock(MaterialPower);
+            if (powerUp.speedScale == 0)
+                powerUp.ChangeVisual();
+            ////Debug.Log($"Release Power up {Random.Range(0, 10)}");
+            //GameManager.Instance.PlayAudio(GameManager.Instance.PowerUpSpawnClip);
+            //powerUp.GameObject.SetActive(true);
+            //if ((new Vector3(3, 3, 3)).magnitude < (powerUp.GameObject.transform.localScale).magnitude)
+            //    powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(3, 3, 3);
+            //else
+            //    powerUp.GameObject.transform.localScale = powerUp.GameObject.transform.localScale + new Vector3(1, 1, 1);
+            //powerUp.GameObject.transform.SetParent(GameManager.Instance.powerUpParent.transform);
+            //powerUp.speedScale = 5f;
+            //Renderer renderer = powerUp.GameObject.GetComponent<Renderer>();
+            //MaterialPropertyBlock MaterialPower = new MaterialPropertyBlock();
+            //renderer.GetPropertyBlock(MaterialPower);
+            //MaterialPower.SetColor("_Color", PowerUpColor);
+            //renderer.SetPropertyBlock(MaterialPower);
         }
 
         VisualEffects(50);

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 public class LevelManager : ManagedUpdateBehaviourNoMono
 {
     private Dictionary<Vector2, GameObject> grid = new Dictionary<Vector2, GameObject>();
@@ -8,6 +9,8 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
     public List<BrickController> Bricks = new List<BrickController>();
     public Dictionary<GameObject, Renderer> BricksMaterial { get => bricksMaterial; }
+
+    List<PowerUpController> powerUps = new List<PowerUpController>();
 
     GameManager gManager;
     int powerUpCount = 0;
@@ -49,11 +52,13 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             if (powerUpController != null) 
             {
                 brickController.powerUp = powerUpController;
+                powerUpController.brick = brick;
                 Renderer rendererPowerUp = powerUpController.GameObject.GetComponent<Renderer>();
                 MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
                 rendererPowerUp.GetPropertyBlock(materialPropertyBlock);
                 brickController.PowerUpColor = materialPropertyBlock.GetColor("_Color");
                 materialPropertyBlock.SetColor("_Color", Color.black);
+                powerUpController.PowerUpColor = brickController.PowerUpColor;
                 rendererPowerUp.SetPropertyBlock(materialPropertyBlock);
             }
 
@@ -118,6 +123,23 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
 #endif
 
+        for (int i = 0; i < gManager.Bricks.Count; i++)
+        {
+            if (gManager.Bricks[i] == null)
+                gManager.Bricks.RemoveAt(i);
+        }
+
+        //for (int i = 0; i < powerUps.Count; i++)
+        //{
+        //    var power = powerUps[i];
+        //    if (power.brick == null) 
+        //    {
+        //        Debug.Log(powerUps.Count);
+        //        gManager.DestroyGameObject(power.GameObject);
+        //        powerUps.RemoveAt(i);
+        //    }
+        //}
+
         var bricksNumber = 0;
         foreach (var item in gManager.Bricks)
         {
@@ -135,12 +157,13 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
             internalLevel++;
             GameManager.Instance.PlayAudio(GameManager.Instance.WinClip);
 
-            if (internalLevel >= 11 || internalLevel <= 0) 
-            {
-                internalLevel = 1;
-            }
+            //if (internalLevel >= 11 || internalLevel <= 0) 
+            //{
+            //    internalLevel = 1;
+            //}
             Color[] selectedGradient = gManager.GetRandomGradient();
             powerUpCount = 0;
+            powerUps.Clear();
             GameManager.Instance.IncreaseLevel();
             GameManager.Instance.levelParent.transform.position = new Vector3(0, 4, 0);
 
@@ -152,6 +175,12 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 if (LevelCreationLogic(i)) continue;
 
                 GameObject brick = gManager.BrickPool.Get();
+
+                if (brick == null) 
+                {
+                
+                }
+
                 item.GameObject = brick;
 
                 if (item.GameObject)
@@ -168,19 +197,17 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
                 {
                     powerUpCount++;
                     powerUpController = gManager.CreatePowerUp(item.GameObject.transform.position);
-                }
 
-                if (powerUpController != null)
-                {
                     item.powerUp = powerUpController;
+                    powerUpController.brick = item.GameObject;
                     Renderer renderer = powerUpController.GameObject.GetComponent<Renderer>();
                     MaterialPropertyBlock materialPropertyBlock = new MaterialPropertyBlock();
                     renderer.GetPropertyBlock(materialPropertyBlock);
                     item.PowerUpColor = materialPropertyBlock.GetColor("_Color");
+                    powerUpController.PowerUpColor = item.PowerUpColor;
                     materialPropertyBlock.SetColor("_Color", Color.black);
                     renderer.SetPropertyBlock(materialPropertyBlock);
                 }
-
                 Renderer rendererBrick = item.GameObject.GetComponent<Renderer>();
 
                 bricksMaterial.TryAdd(item.GameObject, rendererBrick);
@@ -260,6 +287,14 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 if (BricksToNotActivate.Contains(indexToSearch))
                     return true;
+                break;
+
+            default:
+                int rnd = Random.Range(0, 4);
+
+                if (rnd < 2) 
+                    return true;
+
                 break;
         }
         return false;
@@ -372,6 +407,39 @@ public class LevelManager : ManagedUpdateBehaviourNoMono
 
                 ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
                 break;
+
+            default:
+                Durability_4 = new List<int> {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 27 };
+
+                for (int i = 0; i < Durability_4.Count; i++)
+                {
+                    int rnd = Random.Range(0, 4);
+                    if (rnd < 2)
+                        Durability_4.RemoveAt(i);
+                }
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 2, "brick1");
+
+                for (int i = 0; i < Durability_4.Count; i++)
+                {
+                    int rnd = Random.Range(0, 4);
+                    if (rnd < 2)
+                        Durability_4.RemoveAt(i);
+                }
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 3, "brick2");
+
+                for (int i = 0; i < Durability_4.Count; i++)
+                {
+                    int rnd = Random.Range(0, 4);
+                    if (rnd < 2)
+                        Durability_4.RemoveAt(i);
+                }
+
+                ChangeDurability(indexToSearch, controller, Durability_4, 4, "brick3");
+
+                break;
+
         }
     }
 

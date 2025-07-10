@@ -204,7 +204,7 @@ public class GameManager : CustomUpdateManager
 
     public void InitializePool()
     {
-        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, false, 28, 28);
+        BrickPool = new ObjectPool<GameObject>(CreateBrickItem, BrickOnTakeFromPool, BrickOnReturnedToPool, BrickOnDestroyPoolObject, false, 29, 29);
     }
 
     private void BrickOnDestroyPoolObject(GameObject Gobject)
@@ -214,7 +214,7 @@ public class GameManager : CustomUpdateManager
 
     private void BrickOnReturnedToPool(GameObject Gobject)
     {
-        if (BrickPool.CountInactive >= 28)
+        if (BrickPool.CountInactive > 28)
         {
             Destroy(Gobject);
         }
@@ -257,8 +257,13 @@ public class GameManager : CustomUpdateManager
 
     private GameObject CreateBrickItem()
     {
-        int index = Random.Range(0, bricksPrefab.Count);
-        GameObject brick = Instantiate(bricksPrefab[index], levelParent.transform);
+        GameObject brick = null;
+
+        while (brick == null) 
+        {
+            int index = Random.Range(0, bricksPrefab.Count);
+            brick = Instantiate(bricksPrefab[index], levelParent.transform);
+        }
 
         return brick;
     }
@@ -537,6 +542,10 @@ public class GameManager : CustomUpdateManager
         StartCoroutine(LoadAssetsCoroutine());
     }
 
+    public void DestroyGameObject(GameObject gObject) 
+    {
+        Destroy(gObject);
+    }
     public GameObject GetInstance(string assetName)
     {
         if (assetsManager.loadedAssetsGameObjects.ContainsKey(assetName))
@@ -556,46 +565,48 @@ public class GameManager : CustomUpdateManager
         PowerUpController powerUpController = null;
         Renderer renderer = powerUp.GetComponent<Renderer>();
 
-        switch (index)
+        while (powerUpController == null || powerUpController.GameObject == null) 
         {
-            case 0:
-                powerUpController = new MultiBallPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.green);
-                break;
-            case 1:
-                powerUpController = new LongPlayerPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.blue);
-                break;
-            case 2:
-                powerUpController = new ShortPlayerPowerDown();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.red);
-                break;
-            case 3:
-                powerUpController = new FireBallPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.yellow);
-                break;
-            case 4:
-                powerUpController = new SpeedPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.magenta);
-                break;
-            case 5:
-                powerUpController = new BombPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.cyan);
-                break;
+            switch (index)
+            {
+                case 0:
+                    powerUpController = new MultiBallPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.green);
+                    break;
+                case 1:
+                    powerUpController = new LongPlayerPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.blue);
+                    break;
+                case 2:
+                    powerUpController = new ShortPlayerPowerDown();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.red);
+                    break;
+                case 3:
+                    powerUpController = new FireBallPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.yellow);
+                    break;
+                case 4:
+                    powerUpController = new SpeedPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.magenta);
+                    break;
+                case 5:
+                    powerUpController = new BombPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.cyan);
+                    break;
 
-            case 6:
-                powerUpController = new ScoreMultiplierPowerUp();
-                powerUpController.GameObject = powerUp;
-                BallMaterialBlock.SetColor("_Color", Color.white);
-                break;
+                case 6:
+                    powerUpController = new ScoreMultiplierPowerUp();
+                    powerUpController.GameObject = powerUp;
+                    BallMaterialBlock.SetColor("_Color", Color.white);
+                    break;
+            }
         }
-
         renderer.SetPropertyBlock(BallMaterialBlock);
         powerUpController.GameObject.transform.position = position - new Vector3(0, 0, 0.03f);
         scriptsBehaviourNoMono.Add(powerUpController);
@@ -607,9 +618,9 @@ public class GameManager : CustomUpdateManager
 
     public void DestroyPowerUp(PowerUpController powerUp)
     {
+        Destroy(powerUp.GameObject);
         scriptsBehaviourNoMono.Remove(powerUp);
         activePowerUps.Remove(powerUp);
-        Destroy(powerUp.GameObject);
         powerUp = null;
     }
     public void MultipleBallEffect()
