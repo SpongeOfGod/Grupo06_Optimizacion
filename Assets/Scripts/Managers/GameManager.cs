@@ -49,6 +49,12 @@ public class GameManager : CustomUpdateManager
     [SerializeField]
     private List<AssetReferenceTexture2D> assetReferencesTextures2D;
 
+    [SerializeField] private AudioSource bgmSource;
+
+    [SerializeField] private AudioSource gameOverSource;
+
+    [SerializeField] private float fadeTime = 2f;
+
     bool initialized;
     int score = 0;
     int level = 1;
@@ -89,6 +95,13 @@ public class GameManager : CustomUpdateManager
     [SerializeField] GameObject TitleObject;
     [SerializeField] GameObject ButtonSelect;
 
+    [Header("GameOver")]
+    public GameObject ButtonSelectGO;
+    public List<GameObject> GameOverButtonsList;
+    public Canvas gameOver;
+    private bool isGameOver = false;
+
+
     [Header("ParallaxBackground")]
     public List<GameObject> parallaxPlane = new List<GameObject>();
     public List<float> parallaxScales = new List<float>();
@@ -103,6 +116,7 @@ public class GameManager : CustomUpdateManager
     [Header("Managers")]
     public PauseManager PauseManager;
     public LevelManager LevelManager;
+    public GameOverManager GameOverManager;
     public AssetsManager assetsManager;
     BallManager ballManager;
     CollisionManager collisionManager;
@@ -176,7 +190,7 @@ public class GameManager : CustomUpdateManager
         Destroy(Gobject);
     }
 
-    public void PlayAudio(AudioClip audioClip) 
+    public void PlayAudio(AudioClip audioClip)
     {
         SFXAudiorSource.clip = audioClip;
         SFXAudiorSource.Play();
@@ -218,7 +232,7 @@ public class GameManager : CustomUpdateManager
         {
             Destroy(Gobject);
         }
-        else 
+        else
         {
             Gobject.SetActive(false);
         }
@@ -259,7 +273,7 @@ public class GameManager : CustomUpdateManager
     {
         GameObject brick = null;
 
-        while (brick == null) 
+        while (brick == null)
         {
             int index = Random.Range(0, bricksPrefab.Count);
             brick = Instantiate(bricksPrefab[index], levelParent.transform);
@@ -268,12 +282,12 @@ public class GameManager : CustomUpdateManager
         return brick;
     }
 
-    public Mesh GetBrickVariation(BrickController controller, int index) 
+    public Mesh GetBrickVariation(BrickController controller, int index)
     {
         Mesh mesh = null;
         mesh = BrickMeshes[index];
         return mesh;
-        
+
     }
 
     public GameObject SpawnDestroyParticles()
@@ -304,7 +318,7 @@ public class GameManager : CustomUpdateManager
     {
         Quaternion rotation = Quaternion.Euler(-90f, 0f, 0f);
 
-        GameObject particles = Instantiate(ballDestroyParticles, new Vector3 (position.x, -5.69f, 0), rotation);
+        GameObject particles = Instantiate(ballDestroyParticles, new Vector3(position.x, -5.69f, 0), rotation);
 
         var renderer = particles.GetComponent<ParticleSystemRenderer>();
 
@@ -330,9 +344,38 @@ public class GameManager : CustomUpdateManager
         }
 
         if (playerLifes <= 0)
-            SceneManager.LoadScene("Gameplay");
+            GameOverCanvas();
     }
+    private void GameOverCanvas()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+        gameOver.gameObject.SetActive(isGameOver);
+        StartCoroutine(CrossFadeTracks());
+        ButtonSelectGO.gameObject.SetActive(true);
+        scriptsBehaviourNoMono.Add(GameOverManager);
+    }
+    
+    private IEnumerator CrossFadeTracks()
+    {
+        gameOverSource.volume = 0f;
+        gameOverSource.Play();
 
+        float t = 0f;
+        float startVolBGM = bgmSource.volume;
+
+        while (t < fadeTime)
+        {
+            t += Time.deltaTime;
+            float k = t / fadeTime;               
+            bgmSource.volume = Mathf.Lerp(startVolBGM, 0f, k);
+            gameOverSource.volume = Mathf.Lerp(0f, 1f, k);
+            yield return null;
+        }
+
+        bgmSource.Stop();
+        bgmSource.volume = startVolBGM; 
+    }
     private void SetParallax()
     {
         for(int i = 0; i < parallaxPlane.Count; i++)
