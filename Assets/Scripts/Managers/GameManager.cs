@@ -284,6 +284,7 @@ public class GameManager : CustomUpdateManager
 
     public Mesh GetBrickVariation(BrickController controller, int index)
     {
+        index = math.clamp(index, 0, 3);
         Mesh mesh = null;
         mesh = BrickMeshes[index];
         return mesh;
